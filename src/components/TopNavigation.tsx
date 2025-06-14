@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { useFileManager } from '../contexts/FileManagerContext';
-import { Menu, Search, Upload, Grid, List, User, Settings, LogOut } from 'lucide-react';
+import { Menu, Search, Upload, Grid, List, User, Settings, LogOut, Sun, Moon } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { useTheme } from 'next-themes';
 
 interface TopNavigationProps {
   onSidebarToggle: () => void;
@@ -13,6 +14,7 @@ interface TopNavigationProps {
 
 const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
   const { searchQuery, setSearchQuery, viewMode, setViewMode, openModal } = useFileManager();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center gap-4 px-4 shadow-sm">
@@ -52,6 +54,18 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
 
       {/* Right section */}
       <div className="flex items-center gap-2">
+        {/* Theme toggle */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="h-9 w-9 p-0"
+        >
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+
         {/* View toggle */}
         <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
           <Button
