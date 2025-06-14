@@ -40,15 +40,6 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
         >
           <Menu className="w-4 h-4" />
         </Button>
-        
-        <Button
-          onClick={() => openModal('upload')}
-          size="sm"
-          className="h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md"
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          <span className="hidden sm:inline">Upload</span>
-        </Button>
       </div>
 
       {/* Search */}

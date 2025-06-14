@@ -52,21 +52,32 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
   const CategoryItem = ({ item, isActive }: { item: any; isActive: boolean }) => {
     const content = (
       <div
-        className={`flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl cursor-pointer transition-all duration-200 group relative ${
+        className={`flex items-center transition-all duration-200 group relative ${
+          collapsed 
+            ? 'justify-center p-2.5 mx-1 my-1 rounded-lg' 
+            : 'gap-3 px-3 py-2.5 mx-2 rounded-xl hover:scale-[1.01]'
+        } ${
           isActive
             ? 'bg-accent/30 text-foreground shadow-sm'
-            : 'hover:bg-accent/50 text-sidebar-foreground hover:scale-[1.01]'
-        } ${collapsed ? 'justify-center' : ''}`}
+            : 'hover:bg-accent/50 text-sidebar-foreground'
+        } cursor-pointer`}
       >
-        {/* Active indicator dot */}
+        {/* Active indicator dot - only show when not collapsed */}
         {isActive && !collapsed && (
           <div className="absolute left-1 top-1/2 transform -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-full" />
         )}
         
+        {/* Active indicator for collapsed mode */}
+        {isActive && collapsed && (
+          <div className="absolute inset-0 bg-primary/20 rounded-lg" />
+        )}
+        
         <item.icon 
-          className={`w-5 h-5 transition-transform duration-200 ${
+          className={`transition-transform duration-200 ${
+            collapsed ? 'w-5 h-5' : 'w-5 h-5'
+          } ${
             isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
-          } ${collapsed ? '' : ''}`} 
+          }`} 
         />
         {!collapsed && (
           <span className={`text-sm font-medium transition-all duration-200 ${
@@ -84,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
               {content}
             </Link>
           </TooltipTrigger>
-          <TooltipContent side="right">
+          <TooltipContent side="right" className="ml-2">
             <p>{item.name}</p>
           </TooltipContent>
         </Tooltip>
@@ -110,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className={`p-4 border-b border-sidebar-border/50 ${collapsed ? 'px-3' : ''}`}>
+          <div className={`border-b border-sidebar-border/50 ${collapsed ? 'p-3' : 'p-4'}`}>
             {!collapsed ? (
               <>
                 <h2 className="text-lg font-bold text-sidebar-foreground tracking-tight">File Manager</h2>
@@ -130,7 +141,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
                 variant="ghost"
                 size="sm"
                 onClick={() => onCollapsedChange(!collapsed)}
-                className="w-full h-8 p-0 hover:bg-accent/50"
+                className={`h-8 p-0 hover:bg-accent/50 transition-all duration-200 ${
+                  collapsed ? 'w-8 mx-auto' : 'w-full'
+                }`}
               >
                 {collapsed ? (
                   <ChevronRight className="w-4 h-4" />
@@ -143,15 +156,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
           
           {/* Content - Scrollable */}
           <div className="flex-1 overflow-y-auto sidebar-scrollbar lg:sidebar-no-scroll">
-            <div className={`space-y-6 ${collapsed ? 'p-2' : 'p-4'}`}>
+            <div className={`${collapsed ? 'py-4 px-1 space-y-4' : 'p-4 space-y-6'}`}>
               {/* Main Categories */}
-              <div>
+              <div className={collapsed ? 'space-y-1' : ''}>
                 {!collapsed && (
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-3">
                     Categories
                   </h3>
                 )}
-                <div className="space-y-1">
+                <div className={collapsed ? 'space-y-1' : 'space-y-1'}>
                   {mainCategories.map((category) => {
                     const isInFolder = location.pathname.startsWith('/folder');
                     const hasTypeParam = location.search.includes(`type=${category.filter}`);
@@ -170,13 +183,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
               </div>
 
               {/* Action Items */}
-              <div>
+              <div className={collapsed ? 'space-y-1' : ''}>
                 {!collapsed && (
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-3">
                     Actions
                   </h3>
                 )}
-                <div className="space-y-1">
+                <div className={collapsed ? 'space-y-1' : 'space-y-1'}>
                   {actionItems.map((item) => {
                     const isActive = item.id === 'dashboard' 
                       ? location.pathname === '/dashboard'
