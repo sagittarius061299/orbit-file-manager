@@ -1,0 +1,44 @@
+{
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account",
+    "email": "Email Address",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up here",
+    "orLoginWith": "Or login with",
+    "google": "Google",
+    "otp": "OTP",
+    "fingerprint": "Touch ID",
+    "googleLogin": "Continue with Google",
+    "otpLogin": "Login with OTP",
+    "fingerprintLogin": "Login with Touch ID",
+    "errors": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters long"
+    },
+    "success": {
+      "loginSuccess": "Login Successful",
+      "welcomeBack": "Welcome back, {{name}}!",
+      "otpSent": "OTP Sent",
+      "otpSentDescription": "A 6-digit code has been sent to {{email}}",
+      "otpSuccess": "Welcome! You've been authenticated via OTP.",
+      "fingerprintSuccess": "Fingerprint Authentication Successful",
+      "fingerprintSuccessDescription": "Welcome! You've been authenticated via fingerprint.",
+      "googleSuccess": "Google authentication would be implemented here."
+    },
+    "error": {
+      "invalidOtp": "Invalid OTP",
+      "invalidOtpDescription": "Please enter the correct 6-digit code. Try 123456 for demo.",
+      "fingerprintFailed": "Fingerprint Authentication Failed",
+      "fingerprintFailedDescription": "Please try again or use a different login method."
+    }
+  }
+}

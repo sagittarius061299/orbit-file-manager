@@ -1,0 +1,44 @@
+{
+  "login": {
+    "title": "Chào Mừng Trở Lại",
+    "subtitle": "Đăng nhập vào tài khoản của bạn",
+    "email": "Địa Chỉ Email",
+    "emailPlaceholder": "Nhập email của bạn",
+    "password": "Mật Khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu của bạn",
+    "signIn": "Đăng Nhập",
+    "signingIn": "Đang đăng nhập...",
+    "forgotPassword": "Quên mật khẩu?",
+    "noAccount": "Chưa có tài khoản?",
+    "signUp": "Đăng ký tại đây",
+    "orLoginWith": "Hoặc đăng nhập bằng",
+    "google": "Google",
+    "otp": "OTP",
+    "fingerprint": "Vân Tay",
+    "googleLogin": "Tiếp tục với Google",
+    "otpLogin": "Đăng nhập bằng OTP",
+    "fingerprintLogin": "Đăng nhập bằng vân tay",
+    "errors": {
+      "emailRequired": "Email là bắt buộc",
+      "emailInvalid": "Vui lòng nhập địa chỉ email hợp lệ",
+      "passwordRequired": "Mật khẩu là bắt buộc",
+      "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự"
+    },
+    "success": {
+      "loginSuccess": "Đăng Nhập Thành Công",
+      "welcomeBack": "Chào mừng trở lại, {{name}}!",
+      "otpSent": "Đã Gửi OTP",
+      "otpSentDescription": "Mã 6 chữ số đã được gửi đến {{email}}",
+      "otpSuccess": "Chào mừng! Bạn đã được xác thực qua OTP.",
+      "fingerprintSuccess": "Xác Thực Vân Tay Thành Công",
+      "fingerprintSuccessDescription": "Chào mừng! Bạn đã được xác thực qua vân tay.",
+      "googleSuccess": "Xác thực Google sẽ được triển khai tại đây."
+    },
+    "error": {
+      "invalidOtp": "OTP Không Hợp Lệ",
+      "invalidOtpDescription": "Vui lòng nhập mã 6 chữ số chính xác. Thử 123456 cho demo.",
+      "fingerprintFailed": "Xác Thực Vân Tay Thất Bại",
+      "fingerprintFailedDescription": "Vui lòng thử lại hoặc sử dụng phương thức đăng nhập khác."
+    }
+  }
+}

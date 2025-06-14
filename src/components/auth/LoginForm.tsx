@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Mail, Lock, LogIn, Fingerprint, Smartphone } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -14,23 +15,23 @@ import { useToast } from '../../hooks/use-toast';
 import { loginUser, clearError } from '../../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
-// Validation schemas
-const loginSchema = yup.object().shape({
+// Create validation schemas inside component to access t function
+const createLoginSchema = (t: any) => yup.object().shape({
   email: yup
     .string()
-    .required('Email is required')
-    .email('Please enter a valid email address'),
+    .required(t('login.errors.emailRequired'))
+    .email(t('login.errors.emailInvalid')),
   password: yup
     .string()
-    .required('Password is required')
-    .min(6, 'Password must be at least 6 characters long'),
+    .required(t('login.errors.passwordRequired'))
+    .min(6, t('login.errors.passwordMinLength')),
 });
 
-const otpEmailSchema = yup.object().shape({
+const createOtpEmailSchema = (t: any) => yup.object().shape({
   email: yup
     .string()
-    .required('Email is required')
-    .email('Please enter a valid email address'),
+    .required(t('login.errors.emailRequired'))
+    .email(t('login.errors.emailInvalid')),
 });
 
 interface LoginFormData {
@@ -49,6 +50,7 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { isLoading, error } = useAppSelector((state) => state.auth);
   const { toast } = useToast();
+  const { t } = useTranslation();
   
   const [activeTab, setActiveTab] = useState<LoginMethod>('password');
   const [showPassword, setShowPassword] = useState(false);
@@ -63,7 +65,7 @@ const LoginForm: React.FC = () => {
     formState: { errors },
     clearErrors,
   } = useForm<LoginFormData>({
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(createLoginSchema(t)),
     mode: 'onBlur',
   });
 
@@ -74,7 +76,7 @@ const LoginForm: React.FC = () => {
     formState: { errors: otpErrors },
     reset: resetOTP,
   } = useForm<OTPEmailData>({
-    resolver: yupResolver(otpEmailSchema),
+    resolver: yupResolver(createOtpEmailSchema(t)),
     mode: 'onBlur',
   });
 
@@ -87,8 +89,8 @@ const LoginForm: React.FC = () => {
       
       if (loginUser.fulfilled.match(result)) {
         toast({
-          title: "Login Successful",
-          description: `Welcome back, ${result.payload.user.name}!`,
+          title: t('login.success.loginSuccess'),
+          description: t('login.success.welcomeBack', { name: result.payload.user.name }),
         });
         navigate('/dashboard');
       }
@@ -101,8 +103,8 @@ const LoginForm: React.FC = () => {
     setOtpEmail(data.email);
     setOtpStep('otp');
     toast({
-      title: "OTP Sent",
-      description: `A 6-digit code has been sent to ${data.email}`,
+      title: t('login.success.otpSent'),
+      description: t('login.success.otpSentDescription', { email: data.email }),
     });
   };
 
@@ -112,14 +114,14 @@ const LoginForm: React.FC = () => {
       // Simulate OTP verification
       if (value === '123456') {
         toast({
-          title: "Login Successful",
-          description: "Welcome! You've been authenticated via OTP.",
+          title: t('login.success.loginSuccess'),
+          description: t('login.success.otpSuccess'),
         });
         navigate('/dashboard');
       } else {
         toast({
-          title: "Invalid OTP",
-          description: "Please enter the correct 6-digit code. Try 123456 for demo.",
+          title: t('login.error.invalidOtp'),
+          description: t('login.error.invalidOtpDescription'),
           variant: "destructive",
         });
         setOtpValue('');
@@ -129,8 +131,8 @@ const LoginForm: React.FC = () => {
 
   const handleGoogleLogin = () => {
     toast({
-      title: "Google Login",
-      description: "Google authentication would be implemented here.",
+      title: t('login.google'),
+      description: t('login.success.googleSuccess'),
     });
   };
 
@@ -141,14 +143,14 @@ const LoginForm: React.FC = () => {
     setTimeout(() => {
       if (isSuccess) {
         toast({
-          title: "Fingerprint Authentication Successful",
-          description: "Welcome! You've been authenticated via fingerprint.",
+          title: t('login.success.fingerprintSuccess'),
+          description: t('login.success.fingerprintSuccessDescription'),
         });
         navigate('/dashboard');
       } else {
         toast({
-          title: "Fingerprint Authentication Failed",
-          description: "Please try again or use a different login method.",
+          title: t('login.error.fingerprintFailed'),
+          description: t('login.error.fingerprintFailedDescription'),
           variant: "destructive",
         });
       }
@@ -179,10 +181,10 @@ const LoginForm: React.FC = () => {
             <LogIn className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome Back
+            {t('login.title')}
           </h1>
           <p className="text-muted-foreground">
-            Choose your preferred sign-in method
+            {t('login.subtitle')}
           </p>
         </div>
 
@@ -224,14 +226,14 @@ const LoginForm: React.FC = () => {
             <form onSubmit={handleSubmit(onPasswordSubmit)} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Email Address
+                  {t('login.email')}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={t('login.emailPlaceholder')}
                     {...register('email')}
                     className="pl-10 bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
                   />
@@ -243,14 +245,14 @@ const LoginForm: React.FC = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium">
-                  Password
+                  {t('login.password')}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder')}
                     {...register('password')}
                     className="pl-10 pr-10 bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
                   />
@@ -275,7 +277,7 @@ const LoginForm: React.FC = () => {
 
               <div className="text-right">
                 <Button variant="link" className="text-xs text-primary p-0 h-auto hover:underline">
-                  Forgot password?
+                  {t('login.forgotPassword')}
                 </Button>
               </div>
 
@@ -287,12 +289,12 @@ const LoginForm: React.FC = () => {
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Signing in...
+                    {t('login.signingIn')}
                   </div>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4 mr-2" />
-                    Sign In
+                    {t('login.signIn')}
                   </>
                 )}
               </Button>
