@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FileManagerProvider } from '../contexts/FileManagerContext';
 import Sidebar from './Sidebar';
 import TopNavigation from './TopNavigation';
-import FloatingActionButton from './FloatingActionButton';
+import FloatingUploadButton from './FloatingUploadButton';
 import CreateFolderModal from './modals/CreateFolderModal';
 import UploadModal from './modals/UploadModal';
 import FilePreviewModal from './modals/FilePreviewModal';
@@ -15,6 +15,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <FileManagerProvider>
@@ -25,16 +26,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-pink-400/20 to-blue-600/20 rounded-full blur-3xl"></div>
         </div>
 
-        <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+        <Sidebar 
+          isOpen={sidebarOpen} 
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
+          collapsed={sidebarCollapsed}
+          onCollapsedChange={setSidebarCollapsed}
+        />
         
         <div className="flex-1 flex flex-col h-screen overflow-hidden">
-          <TopNavigation onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} />
+          <TopNavigation 
+            onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+            onSidebarCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+            sidebarCollapsed={sidebarCollapsed}
+          />
           <main className="flex-1 overflow-auto custom-scrollbar">
             {children}
           </main>
         </div>
 
-        <FloatingActionButton />
+        <FloatingUploadButton />
         
         {/* Modals */}
         <CreateFolderModal />

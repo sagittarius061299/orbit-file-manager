@@ -10,9 +10,11 @@ import { useTheme } from 'next-themes';
 
 interface TopNavigationProps {
   onSidebarToggle: () => void;
+  onSidebarCollapse: () => void;
+  sidebarCollapsed: boolean;
 }
 
-const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
+const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSidebarCollapse, sidebarCollapsed }) => {
   const { searchQuery, setSearchQuery, viewMode, setViewMode, openModal } = useFileManager();
   const { theme, setTheme } = useTheme();
 
@@ -24,22 +26,33 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
           variant="ghost"
           size="sm"
           onClick={onSidebarToggle}
-          className="lg:hidden"
+          className="lg:hidden h-9 w-9 p-0"
         >
           <Menu className="w-5 h-5" />
         </Button>
         
+        {/* Desktop sidebar collapse toggle */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onSidebarCollapse}
+          className="hidden lg:flex h-9 w-9 p-0"
+        >
+          <Menu className="w-4 h-4" />
+        </Button>
+        
         <Button
           onClick={() => openModal('upload')}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+          size="sm"
+          className="h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md"
         >
           <Upload className="w-4 h-4 mr-2" />
-          Upload
+          <span className="hidden sm:inline">Upload</span>
         </Button>
       </div>
 
       {/* Search */}
-      <div className="flex-1 max-w-lg mx-6">
+      <div className="flex-1 max-w-md mx-4">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
@@ -47,7 +60,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
             placeholder="Search files and folders..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 bg-background/50 backdrop-blur-sm border border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-xl h-11 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="pl-12 bg-background/60 backdrop-blur-sm border border-border/60 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-lg h-9 transition-all duration-200 shadow-sm hover:shadow-md"
           />
         </div>
       </div>
@@ -67,14 +80,14 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
         </Button>
 
         {/* View toggle */}
-        <div className="flex bg-muted/50 backdrop-blur-sm rounded-xl p-1.5 border border-border/50">
+        <div className="flex bg-muted/40 backdrop-blur-sm rounded-lg p-1 border border-border/30">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setViewMode('grid')}
-            className={`p-2.5 rounded-lg transition-all duration-200 ${
+            className={`p-2 rounded-md transition-all duration-200 ${
               viewMode === 'grid'
-                ? 'bg-background shadow-md text-foreground scale-105'
+                ? 'bg-background shadow-sm text-foreground'
                 : 'hover:bg-background/50 text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -84,9 +97,9 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
             variant="ghost"
             size="sm"
             onClick={() => setViewMode('list')}
-            className={`p-2.5 rounded-lg transition-all duration-200 ${
+            className={`p-2 rounded-md transition-all duration-200 ${
               viewMode === 'list'
-                ? 'bg-background shadow-md text-foreground scale-105'
+                ? 'bg-background shadow-sm text-foreground'
                 : 'hover:bg-background/50 text-muted-foreground hover:text-foreground'
             }`}
           >
