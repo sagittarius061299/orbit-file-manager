@@ -15,13 +15,13 @@ const FloatingUploadButton: React.FC = () => {
             <Button
               onClick={() => openModal('upload')}
               size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 border-0"
+              className="h-14 w-14 rounded-2xl gradient-primary hover:scale-110 text-white shadow-xl hover:shadow-2xl transition-all duration-300 border-0 hover-glow animate-glow-pulse"
             >
               <Plus className="w-6 h-6" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="left" className="mr-2">
-            <p>Upload File</p>
+          <TooltipContent side="left" className="mr-3 glass-card border border-border/40 shadow-lg rounded-lg">
+            <p className="font-medium">Upload File</p>
           </TooltipContent>
         </Tooltip>
       </div>
