@@ -43,7 +43,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
       </div>
 
       {/* Search */}
-      <div className="flex-1 max-w-md mx-4">
+      <div className="flex-1 max-w-lg mr-6">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
@@ -56,22 +56,10 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
         </div>
       </div>
 
-      {/* Right section */}
-      <div className="flex items-center gap-2">
-        {/* Theme toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="h-9 w-9 p-0"
-        >
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-
-        {/* View toggle */}
-        <div className="flex bg-muted/40 backdrop-blur-sm rounded-lg p-1 border border-border/30">
+      {/* Right section - Personal & Settings Actions */}
+      <div className="flex items-center gap-1 md:gap-2">
+        {/* View toggle - desktop only */}
+        <div className="hidden sm:flex bg-muted/40 backdrop-blur-sm rounded-lg p-1 border border-border/30">
           <Button
             variant="ghost"
             size="sm"
@@ -98,30 +86,56 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
           </Button>
         </div>
 
+        {/* Separator */}
+        <div className="hidden md:block w-px h-6 bg-border/50 mx-1"></div>
+
+        {/* Theme toggle */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="h-9 w-9 p-0 hover:bg-accent/50"
+        >
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+
         {/* User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 ml-1 hover:bg-accent/50">
+              <Avatar className="h-7 w-7">
                 <AvatarImage src="/placeholder.svg" alt="User" />
-                <AvatarFallback className="bg-blue-500 text-white">
-                  <User className="w-4 h-4" />
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                  <User className="w-3 h-3" />
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 glass-subtle border border-border/50 shadow-xl" align="end">
             <div className="px-3 py-2">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">john.doe@example.com</p>
+              <p className="text-sm font-medium">John Doe</p>
+              <p className="text-xs text-muted-foreground">john.doe@example.com</p>
             </div>
             <DropdownMenuSeparator />
+            {/* Mobile view toggle - show only on small screens */}
+            <div className="sm:hidden">
+              <DropdownMenuItem 
+                className="cursor-pointer" 
+                onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+              >
+                {viewMode === 'grid' ? <List className="w-4 h-4 mr-2" /> : <Grid className="w-4 h-4 mr-2" />}
+                {viewMode === 'grid' ? 'List View' : 'Grid View'}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </div>
             <DropdownMenuItem className="cursor-pointer">
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer text-red-600 dark:text-red-400">
+            <DropdownMenuItem className="cursor-pointer text-destructive">
               <LogOut className="w-4 h-4 mr-2" />
               Sign out
             </DropdownMenuItem>
