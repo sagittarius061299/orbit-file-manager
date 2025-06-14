@@ -1,42 +1,66 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { Alert, AlertDescription } from '../ui/alert';
 import { useToast } from '../ui/use-toast';
 import { loginUser, clearError } from '../../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
+// Validation schema
+const loginSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required('Email is required')
+    .email('Please enter a valid email address'),
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 6 characters long'),
+});
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 const LoginForm: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { isLoading, error } = useAppSelector((state) => state.auth);
   const { toast } = useToast();
   
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !password) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+  } = useForm<LoginFormData>({
+    resolver: yupResolver(loginSchema),
+    mode: 'onBlur',
+  });
 
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      const result = await dispatch(loginUser({ email, password }));
+      const result = await dispatch(loginUser({ 
+        email: data.email, 
+        password: data.password 
+      }));
       
       if (loginUser.fulfilled.match(result)) {
         toast({
           title: "Login Successful",
           description: `Welcome back, ${result.payload.user.name}!`,
         });
-        // Redirect or handle successful login
+        // Redirect to dashboard
+        navigate('/dashboard');
       }
     } catch (err) {
       // Error is handled by the slice
@@ -45,10 +69,11 @@ const LoginForm: React.FC = () => {
 
   // Clear error when user starts typing
   React.useEffect(() => {
-    if (error && (email || password)) {
+    if (error) {
       dispatch(clearError());
+      clearErrors();
     }
-  }, [email, password, error, dispatch]);
+  }, [error, dispatch, clearErrors]);
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -68,13 +93,13 @@ const LoginForm: React.FC = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-            <p className="text-destructive text-sm">{error}</p>
-          </div>
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-medium">
               Email Address
@@ -85,12 +110,13 @@ const LoginForm: React.FC = () => {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register('email')}
                 className="pl-10 bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
-                required
               />
             </div>
+            {errors.email && (
+              <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -103,10 +129,8 @@ const LoginForm: React.FC = () => {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register('password')}
                 className="pl-10 pr-10 bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
-                required
               />
               <Button
                 type="button"
@@ -122,6 +146,9 @@ const LoginForm: React.FC = () => {
                 )}
               </Button>
             </div>
+            {errors.password && (
+              <p className="text-sm text-destructive mt-1">{errors.password.message}</p>
+            )}
           </div>
 
           <div className="text-right">

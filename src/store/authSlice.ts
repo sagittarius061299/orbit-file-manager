@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { authApi } from '../services/authApi';
+import Cookies from 'js-cookie';
 
 interface User {
   id: number;
@@ -20,11 +21,11 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  accessToken: localStorage.getItem('access_token'),
-  refreshToken: localStorage.getItem('refresh_token'),
+  accessToken: Cookies.get('access_token') || null,
+  refreshToken: Cookies.get('refresh_token') || null,
   isLoading: false,
   error: null,
-  isAuthenticated: !!localStorage.getItem('access_token'),
+  isAuthenticated: !!Cookies.get('access_token'),
 };
 
 // Async thunk for login
@@ -34,9 +35,17 @@ export const loginUser = createAsyncThunk(
     try {
       const loginResponse = await authApi.login(credentials.email, credentials.password);
       
-      // Store tokens in localStorage
-      localStorage.setItem('access_token', loginResponse.access_token);
-      localStorage.setItem('refresh_token', loginResponse.refresh_token);
+      // Store tokens in httpOnly cookies
+      Cookies.set('access_token', loginResponse.access_token, { 
+        expires: 7, // 7 days
+        secure: true,
+        sameSite: 'strict'
+      });
+      Cookies.set('refresh_token', loginResponse.refresh_token, { 
+        expires: 7, // 7 days
+        secure: true,
+        sameSite: 'strict'
+      });
       
       // Get user profile
       const userProfile = await authApi.getProfile(loginResponse.access_token);
@@ -61,8 +70,8 @@ const authSlice = createSlice({
       state.refreshToken = null;
       state.isAuthenticated = false;
       state.error = null;
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      Cookies.remove('access_token');
+      Cookies.remove('refresh_token');
     },
     clearError: (state) => {
       state.error = null;
