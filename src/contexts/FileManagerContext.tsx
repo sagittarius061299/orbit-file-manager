@@ -36,6 +36,13 @@ interface FileManagerContextType {
   previewFile: FileItem | null;
   renameItem: FileItem | null;
   deleteItems: FileItem[];
+  // Pagination
+  displayedFiles: FileItem[];
+  isLoading: boolean;
+  hasMore: boolean;
+  loadMoreFiles: () => Promise<void>;
+  resetPagination: () => void;
+  // Methods
   setCurrentFolder: (folderId: string) => void;
   setViewMode: (mode: 'grid' | 'list') => void;
   setSelectedItems: (items: string[]) => void;
@@ -53,61 +60,66 @@ interface FileManagerContextType {
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(undefined);
 
-// Mock data
-const mockFiles: FileItem[] = [
-  {
-    id: '1',
-    name: 'Project Proposal.pdf',
-    type: 'file',
-    size: '2.4 MB',
-    lastModified: '2 hours ago',
-    icon: '📄',
-    parent: 'root'
-  },
-  {
-    id: '2',
-    name: 'Design Assets',
-    type: 'folder',
-    lastModified: '1 day ago',
-    icon: '📁',
-    parent: 'root'
-  },
-  {
-    id: '3',
-    name: 'presentation.pptx',
-    type: 'file',
-    size: '15.2 MB',
-    lastModified: '3 days ago',
-    icon: '📊',
-    parent: 'root'
-  },
-  {
-    id: '4',
-    name: 'vacation-photo.jpg',
-    type: 'file',
-    size: '3.8 MB',
-    lastModified: '1 week ago',
-    icon: '🖼️',
-    parent: 'root'
-  },
-  {
-    id: '5',
-    name: 'Documents',
-    type: 'folder',
-    lastModified: '2 weeks ago',
-    icon: '📂',
-    parent: 'root'
-  },
-  {
-    id: '6',
-    name: 'logo-design.ai',
-    type: 'file',
-    size: '892 KB',
-    lastModified: '1 day ago',
-    icon: '🎨',
-    parent: '2'
+// Generate 100 mock files
+const generateMockFiles = (): FileItem[] => {
+  const fileTypes = [
+    { extensions: ['pdf', 'doc', 'docx', 'txt'], icons: ['📄', '📝', '📋'], type: 'documents' },
+    { extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'], icons: ['🖼️', '📸', '🎨'], type: 'pictures' },
+    { extensions: ['mp4', 'avi', 'mov', 'mkv'], icons: ['🎬', '📹', '🎥'], type: 'videos' },
+    { extensions: ['mp3', 'wav', 'flac'], icons: ['🎵', '🎶', '🔊'], type: 'music' },
+    { extensions: ['zip', 'rar', 'exe', 'dmg'], icons: ['📦', '⚙️', '🔧'], type: 'other' }
+  ];
+
+  const names = [
+    'Project Proposal', 'Design Assets', 'Meeting Notes', 'Vacation Photos', 'Budget Report',
+    'Marketing Campaign', 'User Research', 'Product Mockup', 'Brand Guidelines', 'Financial Data',
+    'Client Presentation', 'Team Photos', 'Architecture Docs', 'Launch Plan', 'User Feedback',
+    'Analytics Report', 'Design System', 'Roadmap 2024', 'Customer Survey', 'Training Materials',
+    'Performance Metrics', 'Website Backup', 'Social Media Kit', 'Legal Documents', 'Quarterly Review'
+  ];
+
+  const timeStamps = [
+    '2 hours ago', '1 day ago', '3 days ago', '1 week ago', '2 weeks ago', '1 month ago',
+    '2 months ago', '3 months ago', '6 months ago', '1 year ago'
+  ];
+
+  const files: FileItem[] = [];
+  
+  // Add some folders first
+  for (let i = 0; i < 15; i++) {
+    files.push({
+      id: `folder-${i}`,
+      name: names[i % names.length] + (i > names.length - 1 ? ` ${Math.floor(i / names.length) + 1}` : ''),
+      type: 'folder',
+      lastModified: timeStamps[i % timeStamps.length],
+      icon: '📁',
+      parent: 'root'
+    });
   }
-];
+
+  // Add files
+  for (let i = 0; i < 85; i++) {
+    const fileType = fileTypes[i % fileTypes.length];
+    const extension = fileType.extensions[i % fileType.extensions.length];
+    const icon = fileType.icons[i % fileType.icons.length];
+    const name = names[i % names.length];
+    const size = `${(Math.random() * 50 + 0.1).toFixed(1)} MB`;
+    
+    files.push({
+      id: `file-${i}`,
+      name: `${name}${i > names.length - 1 ? ` ${Math.floor(i / names.length) + 1}` : ''}.${extension}`,
+      type: 'file',
+      size,
+      lastModified: timeStamps[i % timeStamps.length],
+      icon,
+      parent: 'root'
+    });
+  }
+
+  return files;
+};
+
+const mockFiles: FileItem[] = generateMockFiles();
 
 const mockFolders: Folder[] = [
   {
@@ -151,6 +163,13 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
     rename: false,
     delete: false
   });
+
+  // Pagination state
+  const [displayedFiles, setDisplayedFiles] = useState<FileItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const PAGE_SIZE = 20;
 
   // Initialize state from URL
   useEffect(() => {
@@ -208,6 +227,70 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
     setSearchParams(newSearchParams);
   };
 
+  // Helper function to get filtered files
+  const getFilteredFiles = () => {
+    return files.filter(file => {
+      const matchesFolder = file.parent === currentFolder;
+      const matchesSearch = searchQuery === '' || 
+        file.name.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Apply type filter
+      let matchesFilter = true;
+      if (currentFilter !== 'all') {
+        const getFileType = (file: FileItem) => {
+          if (file.type === 'folder') return 'folder';
+          
+          const extension = file.name.split('.').pop()?.toLowerCase();
+          if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension || '')) return 'pictures';
+          if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'].includes(extension || '')) return 'videos';
+          if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(extension || '')) return 'documents';
+          if (['mp3', 'wav', 'flac', 'aac', 'ogg'].includes(extension || '')) return 'music';
+          return 'other';
+        };
+        
+        const fileType = getFileType(file);
+        matchesFilter = fileType === currentFilter || file.type === 'folder';
+      }
+      
+      return matchesFolder && matchesSearch && matchesFilter;
+    });
+  };
+
+  // Load more files function
+  const loadMoreFiles = async () => {
+    if (isLoading || !hasMore) return;
+    
+    setIsLoading(true);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    const filteredFiles = getFilteredFiles();
+    const nextPage = currentPage + 1;
+    const newFiles = filteredFiles.slice(0, (nextPage + 1) * PAGE_SIZE);
+    
+    setDisplayedFiles(newFiles);
+    setCurrentPage(nextPage);
+    setHasMore(newFiles.length < filteredFiles.length);
+    setIsLoading(false);
+  };
+
+  // Reset pagination function
+  const resetPagination = () => {
+    const filteredFiles = getFilteredFiles();
+    const initialFiles = filteredFiles.slice(0, PAGE_SIZE);
+    
+    setDisplayedFiles(initialFiles);
+    setCurrentPage(0);
+    setHasMore(initialFiles.length < filteredFiles.length);
+    setIsLoading(false);
+  };
+
+  // Initialize pagination when filters change
+  useEffect(() => {
+    resetPagination();
+  }, [currentFolder, currentFilter, searchQuery]);
+
   // Simulate API search functionality
   const searchFiles = async (query: string): Promise<FileItem[]> => {
     // Simulate API delay
@@ -234,6 +317,13 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
       previewFile,
       renameItem,
       deleteItems,
+      // Pagination
+      displayedFiles,
+      isLoading,
+      hasMore,
+      loadMoreFiles,
+      resetPagination,
+      // Methods
       setCurrentFolder: navigateToFolder,
       setViewMode,
       setSelectedItems,
