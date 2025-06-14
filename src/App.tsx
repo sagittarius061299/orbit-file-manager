@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,15 +20,19 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/folder/*" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="*" element={
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/folder/*" element={<Index />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            } />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
