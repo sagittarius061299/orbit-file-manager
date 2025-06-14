@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <FileManagerProvider>
-      <div className="min-h-screen bg-background flex w-full relative overflow-hidden">
+      <div className="h-screen bg-background flex w-full overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl"></div>
@@ -27,11 +27,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <div className="flex-1 flex flex-col overflow-hidden relative">
+        <div className="flex-1 flex flex-col h-screen overflow-hidden">
           <TopNavigation onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} />
-          <div className="flex-1 overflow-auto custom-scrollbar">
+          <main className="flex-1 overflow-auto custom-scrollbar">
             {children}
-          </div>
+          </main>
         </div>
 
         <FloatingActionButton />

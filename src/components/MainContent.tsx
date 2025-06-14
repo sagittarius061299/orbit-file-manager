@@ -30,12 +30,12 @@ const MainContent: React.FC<MainContentProps> = ({ sidebarOpen }) => {
   });
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="p-8 pb-6">
+    <div className="flex-1 flex flex-col h-full">
+      <div className="p-8 pb-6 flex-shrink-0">
         <BreadcrumbNavigation />
       </div>
       
-      <div className="flex-1 overflow-auto px-8 pb-8" id="scroll-container">
+      <div className="flex-1 overflow-auto px-8 pb-8 min-h-0" id="scroll-container">
         {/* Modern drag and drop area */}
         <div className="h-full min-h-96 rounded-2xl border-2 border-dashed border-border/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg group">
           <div className="p-8 h-full">

@@ -17,7 +17,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="h-16 glass-subtle border-b border-border/50 flex items-center gap-4 px-6 backdrop-blur-md z-10">
+    <header className="sticky top-0 h-16 glass-subtle border-b border-border/50 flex items-center gap-4 px-6 backdrop-blur-md z-30 flex-shrink-0">
       {/* Left section */}
       <div className="flex items-center gap-3">
         <Button
@@ -124,7 +124,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
+    </header>
   );
 };
 
