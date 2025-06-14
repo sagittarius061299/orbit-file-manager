@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_BASE_URL = 'https://api.escuelajs.co/api/v1';
+import api from './api';
 
 interface LoginResponse {
   access_token: string;
@@ -15,20 +13,34 @@ interface UserProfile {
   avatar: string;
 }
 
+interface RefreshTokenResponse {
+  access_token: string;
+  refresh_token: string;
+}
+
 export const authApi = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
-    const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+    const response = await api.post('/auth/login', {
       email,
       password,
     });
     return response.data;
   },
 
-  getProfile: async (accessToken: string): Promise<UserProfile> => {
-    const response = await axios.get(`${API_BASE_URL}/auth/profile`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+  getProfile: async (accessToken?: string): Promise<UserProfile> => {
+    // If accessToken is provided, use it directly (for initial login)
+    // Otherwise, the interceptor will add the token from cookies
+    const config = accessToken ? {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    } : {};
+    
+    const response = await api.get('/auth/profile', config);
+    return response.data;
+  },
+
+  refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
+    const response = await api.post('/auth/refresh-token', {
+      refreshToken,
     });
     return response.data;
   },

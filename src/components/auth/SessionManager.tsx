@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { authApi } from '../../services/authApi';
-import { loginUser } from '../../store/authSlice';
+import { updateTokens } from '../../store/authSlice';
 import Cookies from 'js-cookie';
 
 interface SessionManagerProps {
@@ -19,9 +19,15 @@ const SessionManager: React.FC<SessionManagerProps> = ({ children }) => {
       if (accessToken && !isAuthenticated && !user) {
         try {
           // Try to get user profile to verify token is still valid
-          const userProfile = await authApi.getProfile(accessToken);
+          const userProfile = await authApi.getProfile();
           
-          // If successful, update Redux state
+          // If successful, update Redux state with existing tokens
+          dispatch(updateTokens({
+            access_token: accessToken,
+            refresh_token: Cookies.get('refresh_token'),
+          }));
+          
+          // Also store user profile
           dispatch({
             type: 'auth/loginUser/fulfilled',
             payload: {
@@ -33,9 +39,8 @@ const SessionManager: React.FC<SessionManagerProps> = ({ children }) => {
             },
           });
         } catch (error) {
-          // If token is invalid, clear cookies
-          Cookies.remove('access_token');
-          Cookies.remove('refresh_token');
+          // If token is invalid, the API interceptor will handle cleanup
+          console.log('Session validation failed, token may have expired');
         }
       }
     };

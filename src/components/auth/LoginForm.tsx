@@ -8,7 +8,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Alert, AlertDescription } from '../ui/alert';
-import { useToast } from '../ui/use-toast';
+import { useToast } from '../../hooks/use-toast';
 import { loginUser, clearError } from '../../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 

@@ -55,7 +55,15 @@ export const loginUser = createAsyncThunk(
         user: userProfile,
       };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
+      // Clear any existing tokens on login failure
+      Cookies.remove('access_token');
+      Cookies.remove('refresh_token');
+      
+      return rejectWithValue(
+        error.response?.data?.message || 
+        error.response?.data?.error || 
+        'Login failed. Please check your credentials.'
+      );
     }
   }
 );
@@ -70,11 +78,19 @@ const authSlice = createSlice({
       state.refreshToken = null;
       state.isAuthenticated = false;
       state.error = null;
+      // Clear cookies
       Cookies.remove('access_token');
       Cookies.remove('refresh_token');
     },
     clearError: (state) => {
       state.error = null;
+    },
+    updateTokens: (state, action: PayloadAction<{ access_token: string; refresh_token?: string }>) => {
+      state.accessToken = action.payload.access_token;
+      if (action.payload.refresh_token) {
+        state.refreshToken = action.payload.refresh_token;
+      }
+      state.isAuthenticated = true;
     },
   },
   extraReducers: (builder) => {
@@ -99,5 +115,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, updateTokens } = authSlice.actions;
 export default authSlice.reducer;
