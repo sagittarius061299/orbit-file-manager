@@ -1,16 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, Fingerprint, ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Fingerprint, ArrowLeft, CheckCircle, XCircle, Sun, Moon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { useToast } from '../ui/use-toast';
+import { useTheme } from 'next-themes';
 
 type AuthMethod = 'credentials' | 'google' | 'email-otp' | 'fingerprint';
 type OtpStep = 'email' | 'verification';
 
 const LoginScreen: React.FC = () => {
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [activeMethod, setActiveMethod] = useState<AuthMethod>('credentials');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -180,6 +182,17 @@ const LoginScreen: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Theme toggle */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        className="absolute top-4 right-4 h-10 w-10 p-0 rounded-xl hover:bg-accent/50 transition-all duration-300 hover:scale-110 z-10"
+      >
+        <Sun className="h-4 w-4 rotate-0 scale-100 transition-all duration-300 dark:-rotate-90 dark:scale-0" />
+        <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all duration-300 dark:rotate-0 dark:scale-100" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-primary/20 via-secondary/15 to-accent/10 rounded-full blur-3xl animate-float"></div>
