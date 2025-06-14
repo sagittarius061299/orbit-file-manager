@@ -18,12 +18,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <FileManagerProvider>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex w-full">
+      <div className="min-h-screen bg-background flex w-full relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-pink-400/20 to-blue-600/20 rounded-full blur-3xl"></div>
+        </div>
+
         <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden relative">
           <TopNavigation onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} />
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto custom-scrollbar">
             {children}
           </div>
         </div>

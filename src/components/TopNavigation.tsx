@@ -17,7 +17,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center gap-4 px-4 shadow-sm">
+    <div className="h-16 glass-subtle border-b border-border/50 flex items-center gap-4 px-6 backdrop-blur-md z-10">
       {/* Left section */}
       <div className="flex items-center gap-3">
         <Button
@@ -31,7 +31,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
         
         <Button
           onClick={() => openModal('upload')}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
         >
           <Upload className="w-4 h-4 mr-2" />
           Upload
@@ -39,15 +39,15 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
       </div>
 
       {/* Search */}
-      <div className="flex-1 max-w-md mx-4">
+      <div className="flex-1 max-w-lg mx-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             type="text"
             placeholder="Search files and folders..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-gray-50 dark:bg-gray-700 border-0 focus:ring-2 focus:ring-blue-500 rounded-lg"
+            className="pl-12 bg-background/50 backdrop-blur-sm border border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-xl h-11 transition-all duration-200 shadow-sm hover:shadow-md"
           />
         </div>
       </div>
@@ -67,15 +67,15 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
         </Button>
 
         {/* View toggle */}
-        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+        <div className="flex bg-muted/50 backdrop-blur-sm rounded-xl p-1.5 border border-border/50">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md transition-colors ${
+            className={`p-2.5 rounded-lg transition-all duration-200 ${
               viewMode === 'grid'
-                ? 'bg-white dark:bg-gray-600 shadow-sm'
-                : 'hover:bg-gray-200 dark:hover:bg-gray-600'
+                ? 'bg-background shadow-md text-foreground scale-105'
+                : 'hover:bg-background/50 text-muted-foreground hover:text-foreground'
             }`}
           >
             <Grid className="w-4 h-4" />
@@ -84,10 +84,10 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
             variant="ghost"
             size="sm"
             onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md transition-colors ${
+            className={`p-2.5 rounded-lg transition-all duration-200 ${
               viewMode === 'list'
-                ? 'bg-white dark:bg-gray-600 shadow-sm'
-                : 'hover:bg-gray-200 dark:hover:bg-gray-600'
+                ? 'bg-background shadow-md text-foreground scale-105'
+                : 'hover:bg-background/50 text-muted-foreground hover:text-foreground'
             }`}
           >
             <List className="w-4 h-4" />
@@ -106,7 +106,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle }) => {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg" align="end">
+          <DropdownMenuContent className="w-56 glass-subtle border border-border/50 shadow-xl" align="end">
             <div className="px-3 py-2">
               <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">john.doe@example.com</p>

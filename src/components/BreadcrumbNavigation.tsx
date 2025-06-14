@@ -26,13 +26,13 @@ const BreadcrumbNavigation: React.FC = () => {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <nav className="flex items-center space-x-2 text-sm">
+    <nav className="flex items-center space-x-1 text-sm">
       <button
         onClick={() => navigateToFolder('root')}
-        className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 font-medium ${
           currentFolder === 'root'
-            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30'
-            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+            ? 'text-primary bg-primary/10 shadow-sm'
+            : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
         }`}
       >
         <Home className="w-4 h-4" />
@@ -41,13 +41,13 @@ const BreadcrumbNavigation: React.FC = () => {
 
       {breadcrumbs.map((folder, index) => (
         <React.Fragment key={folder.id}>
-          <ChevronRight className="w-4 h-4 text-gray-400" />
+          <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
           <button
             onClick={() => navigateToFolder(folder.id)}
-            className={`px-2 py-1 rounded-md transition-colors ${
+            className={`px-3 py-2 rounded-xl transition-all duration-200 font-medium ${
               index === breadcrumbs.length - 1
-                ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'text-primary bg-primary/10 shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
             }`}
           >
             {folder.name}

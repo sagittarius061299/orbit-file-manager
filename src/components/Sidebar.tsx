@@ -48,23 +48,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const CategoryItem = ({ item, isActive }: { item: any; isActive: boolean }) => (
     <Link to={item.path + (item.filter && item.filter !== 'all' ? `?type=${item.filter}` : '')} onClick={() => handleCategoryClick(item.id, item.filter, item.path)}>
       <div
-        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 group relative ${
+        className={`flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl cursor-pointer transition-all duration-200 group relative ${
           isActive
-            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-            : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
+            ? 'bg-primary text-primary-foreground shadow-md scale-[1.02]'
+            : 'hover:bg-accent/50 text-sidebar-foreground hover:scale-[1.01]'
         }`}
       >
-        {/* Active indicator dot */}
+        {/* Active indicator gradient */}
         {isActive && (
-          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full" />
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-600 rounded-r-full shadow-sm" />
         )}
         
         <item.icon 
-          className={`w-5 h-5 ${
-            isActive ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'
+          className={`w-5 h-5 transition-transform duration-200 ${
+            isActive ? 'text-primary-foreground scale-110' : 'text-muted-foreground group-hover:text-foreground'
           }`} 
         />
-        <span className="text-sm font-medium">{item.name}</span>
+        <span className={`text-sm font-medium transition-all duration-200 ${
+          isActive ? 'font-semibold' : ''
+        }`}>{item.name}</span>
       </div>
     </Link>
   );
@@ -73,22 +75,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     <>
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 glass border-r border-sidebar-border transform transition-all duration-300 ease-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:relative lg:translate-x-0 lg:block`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">File Manager</h2>
+          <div className="p-6 border-b border-sidebar-border/50">
+            <h2 className="text-xl font-bold text-sidebar-foreground tracking-tight">File Manager</h2>
+            <p className="text-sm text-muted-foreground mt-1">Organize your files</p>
           </div>
           
           {/* Content - Scrollable */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-3 space-y-6">
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <div className="p-4 space-y-8">
               {/* Main Categories */}
               <div>
-                <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 px-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 px-3">
                   Categories
                 </h3>
                 <div className="space-y-1">
@@ -111,7 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
 
               {/* Action Items */}
               <div>
-                <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 px-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 px-3">
                   Actions
                 </h3>
                 <div className="space-y-1">
@@ -143,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden transition-opacity duration-300"
           onClick={onToggle}
         />
       )}
