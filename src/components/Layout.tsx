@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FileManagerProvider } from '../contexts/FileManagerContext';
 import Sidebar from './Sidebar';
 import TopNavigation from './TopNavigation';
-import FloatingUploadButton from './FloatingUploadButton';
+import FloatingActionButton from './FloatingActionButton';
 import CreateFolderModal from './modals/CreateFolderModal';
 import UploadModal from './modals/UploadModal';
 import FilePreviewModal from './modals/FilePreviewModal';
@@ -48,7 +48,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </main>
         </div>
 
-        <FloatingUploadButton />
+        <FloatingActionButton />
         
         {/* Modals */}
         <CreateFolderModal />
