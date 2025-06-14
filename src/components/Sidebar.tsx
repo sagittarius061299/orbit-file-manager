@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useFileManager } from '../contexts/FileManagerContext';
-import { ChevronRight, ChevronDown, Folder, FolderOpen } from 'lucide-react';
+import { Files, Image, FileText, Video, Music, MoreHorizontal, Share, Star, Trash2 } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,75 +9,49 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
-  const { folders, currentFolder, setCurrentFolder } = useFileManager();
-  const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set(['root']));
+  const { currentFolder, setCurrentFolder } = useFileManager();
 
-  const toggleFolder = (folderId: string) => {
-    const newExpanded = new Set(expandedFolders);
-    if (newExpanded.has(folderId)) {
-      newExpanded.delete(folderId);
-    } else {
-      newExpanded.add(folderId);
-    }
-    setExpandedFolders(newExpanded);
+  const mainCategories = [
+    { id: 'all', name: 'All Files', icon: Files, isDefault: true },
+    { id: 'pictures', name: 'Pictures', icon: Image },
+    { id: 'documents', name: 'Documents', icon: FileText },
+    { id: 'videos', name: 'Videos', icon: Video },
+    { id: 'music', name: 'Music', icon: Music },
+    { id: 'other', name: 'Other', icon: MoreHorizontal },
+  ];
+
+  const actionItems = [
+    { id: 'share', name: 'Share', icon: Share },
+    { id: 'starred', name: 'Starred', icon: Star },
+    { id: 'recycle', name: 'Recycle Bin', icon: Trash2 },
+  ];
+
+  const handleCategoryClick = (categoryId: string) => {
+    setCurrentFolder(categoryId);
   };
 
-  const renderFolderTree = (parentId: string, level: number = 0) => {
-    const childFolders = folders.filter(folder => folder.parent === parentId);
-    
-    return childFolders.map(folder => {
-      const isExpanded = expandedFolders.has(folder.id);
-      const isSelected = currentFolder === folder.id;
-      const hasChildren = folders.some(f => f.parent === folder.id);
-
-      return (
-        <div key={folder.id} className="select-none">
-          <div
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 group ${
-              isSelected
-                ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
-            }`}
-            style={{ paddingLeft: `${12 + level * 16}px` }}
-            onClick={() => setCurrentFolder(folder.id)}
-          >
-            <div className="flex items-center gap-1 flex-1">
-              {hasChildren && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFolder(folder.id);
-                  }}
-                  className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  {isExpanded ? (
-                    <ChevronDown className="w-3 h-3" />
-                  ) : (
-                    <ChevronRight className="w-3 h-3" />
-                  )}
-                </button>
-              )}
-              {!hasChildren && <div className="w-4" />}
-              
-              {isSelected || isExpanded ? (
-                <FolderOpen className="w-4 h-4 text-blue-500" />
-              ) : (
-                <Folder className="w-4 h-4" />
-              )}
-              
-              <span className="text-sm font-medium truncate">{folder.name}</span>
-            </div>
-          </div>
-          
-          {isExpanded && hasChildren && (
-            <div className="ml-2">
-              {renderFolderTree(folder.id, level + 1)}
-            </div>
-          )}
-        </div>
-      );
-    });
-  };
+  const CategoryItem = ({ item, isActive }: { item: any; isActive: boolean }) => (
+    <div
+      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 group relative ${
+        isActive
+          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+          : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
+      }`}
+      onClick={() => handleCategoryClick(item.id)}
+    >
+      {/* Active indicator dot */}
+      {isActive && (
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full" />
+      )}
+      
+      <item.icon 
+        className={`w-5 h-5 ${
+          isActive ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'
+        }`} 
+      />
+      <span className="text-sm font-medium">{item.name}</span>
+    </div>
+  );
 
   return (
     <>
@@ -88,43 +62,45 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
         } lg:relative lg:translate-x-0 lg:block`}
       >
         <div className="flex flex-col h-full">
+          {/* Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">File Manager</h2>
           </div>
           
-          <div className="flex-1 p-3 overflow-y-auto">
-            <div className="space-y-1">
-              {/* Root folder */}
-              <div
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                  currentFolder === 'root'
-                    ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
-                }`}
-                onClick={() => setCurrentFolder('root')}
-              >
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFolder('root');
-                  }}
-                  className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  {expandedFolders.has('root') ? (
-                    <ChevronDown className="w-3 h-3" />
-                  ) : (
-                    <ChevronRight className="w-3 h-3" />
-                  )}
-                </button>
-                <FolderOpen className="w-4 h-4 text-blue-500" />
-                <span className="text-sm font-medium">My Drive</span>
-              </div>
-              
-              {expandedFolders.has('root') && (
-                <div className="ml-2">
-                  {renderFolderTree('root')}
+          {/* Content - Scrollable */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-3 space-y-6">
+              {/* Main Categories */}
+              <div>
+                <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 px-4">
+                  Categories
+                </h3>
+                <div className="space-y-1">
+                  {mainCategories.map((category) => (
+                    <CategoryItem
+                      key={category.id}
+                      item={category}
+                      isActive={currentFolder === category.id || (category.isDefault && currentFolder === 'root')}
+                    />
+                  ))}
                 </div>
-              )}
+              </div>
+
+              {/* Action Items */}
+              <div>
+                <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 px-4">
+                  Actions
+                </h3>
+                <div className="space-y-1">
+                  {actionItems.map((item) => (
+                    <CategoryItem
+                      key={item.id}
+                      item={item}
+                      isActive={currentFolder === item.id}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
