@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { useFileManager } from '../contexts/FileManagerContext';
-import { Files, Image, FileText, Video, Music, MoreHorizontal, Share, Star, Trash2 } from 'lucide-react';
+import { Files, Image, FileText, Video, Music, MoreHorizontal, Share, Star, Trash2, BarChart } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -10,47 +11,52 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { currentFolder, setCurrentFolder } = useFileManager();
+  const location = useLocation();
 
   const mainCategories = [
-    { id: 'all', name: 'All Files', icon: Files, isDefault: true },
-    { id: 'pictures', name: 'Pictures', icon: Image },
-    { id: 'documents', name: 'Documents', icon: FileText },
-    { id: 'videos', name: 'Videos', icon: Video },
-    { id: 'music', name: 'Music', icon: Music },
-    { id: 'other', name: 'Other', icon: MoreHorizontal },
+    { id: 'all', name: 'All Files', icon: Files, isDefault: true, path: '/' },
+    { id: 'pictures', name: 'Pictures', icon: Image, path: '/' },
+    { id: 'documents', name: 'Documents', icon: FileText, path: '/' },
+    { id: 'videos', name: 'Videos', icon: Video, path: '/' },
+    { id: 'music', name: 'Music', icon: Music, path: '/' },
+    { id: 'other', name: 'Other', icon: MoreHorizontal, path: '/' },
   ];
 
   const actionItems = [
-    { id: 'share', name: 'Share', icon: Share },
-    { id: 'starred', name: 'Starred', icon: Star },
-    { id: 'recycle', name: 'Recycle Bin', icon: Trash2 },
+    { id: 'dashboard', name: 'Dashboard', icon: BarChart, path: '/dashboard' },
+    { id: 'share', name: 'Share', icon: Share, path: '/' },
+    { id: 'starred', name: 'Starred', icon: Star, path: '/' },
+    { id: 'recycle', name: 'Recycle Bin', icon: Trash2, path: '/' },
   ];
 
   const handleCategoryClick = (categoryId: string) => {
-    setCurrentFolder(categoryId);
+    if (categoryId !== 'dashboard') {
+      setCurrentFolder(categoryId);
+    }
   };
 
   const CategoryItem = ({ item, isActive }: { item: any; isActive: boolean }) => (
-    <div
-      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 group relative ${
-        isActive
-          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-          : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
-      }`}
-      onClick={() => handleCategoryClick(item.id)}
-    >
-      {/* Active indicator dot */}
-      {isActive && (
-        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full" />
-      )}
-      
-      <item.icon 
-        className={`w-5 h-5 ${
-          isActive ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'
-        }`} 
-      />
-      <span className="text-sm font-medium">{item.name}</span>
-    </div>
+    <Link to={item.path} onClick={() => handleCategoryClick(item.id)}>
+      <div
+        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 group relative ${
+          isActive
+            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+            : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
+        }`}
+      >
+        {/* Active indicator dot */}
+        {isActive && (
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full" />
+        )}
+        
+        <item.icon 
+          className={`w-5 h-5 ${
+            isActive ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'
+          }`} 
+        />
+        <span className="text-sm font-medium">{item.name}</span>
+      </div>
+    </Link>
   );
 
   return (
@@ -80,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                     <CategoryItem
                       key={category.id}
                       item={category}
-                      isActive={currentFolder === category.id || (category.isDefault && currentFolder === 'root')}
+                      isActive={location.pathname === '/' && (currentFolder === category.id || (category.isDefault && currentFolder === 'root'))}
                     />
                   ))}
                 </div>
@@ -96,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                     <CategoryItem
                       key={item.id}
                       item={item}
-                      isActive={currentFolder === item.id}
+                      isActive={item.id === 'dashboard' ? location.pathname === '/dashboard' : currentFolder === item.id}
                     />
                   ))}
                 </div>
