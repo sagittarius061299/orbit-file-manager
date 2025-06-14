@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface FileItem {
   id: string;
@@ -10,6 +10,7 @@ export interface FileItem {
   lastModified: string;
   icon: string;
   parent?: string;
+  path: string; // Full path like "documents/projects/2024"
 }
 
 export interface Folder {
@@ -17,12 +18,14 @@ export interface Folder {
   name: string;
   parent?: string;
   children: string[];
+  path: string; // Full path like "documents/projects"
 }
 
 interface FileManagerContextType {
   files: FileItem[];
   folders: Folder[];
   currentFolder: string;
+  currentPath: string[];
   viewMode: 'grid' | 'list';
   selectedItems: string[];
   searchQuery: string;
@@ -54,101 +57,374 @@ interface FileManagerContextType {
   setDeleteItems: (items: FileItem[]) => void;
   searchFiles: (query: string) => Promise<FileItem[]>;
   navigateToFolder: (folderId: string) => void;
+  navigateToPath: (pathArray: string[]) => void;
   setCurrentFilter: (filter: string) => void;
   currentFilter: string;
+  getBreadcrumbs: () => { id: string; name: string; path: string[] }[];
 }
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(undefined);
 
-// Generate 100 mock files
-const generateMockFiles = (): FileItem[] => {
-  const fileTypes = [
-    { extensions: ['pdf', 'doc', 'docx', 'txt'], icons: ['📄', '📝', '📋'], type: 'documents' },
-    { extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'], icons: ['🖼️', '📸', '🎨'], type: 'pictures' },
-    { extensions: ['mp4', 'avi', 'mov', 'mkv'], icons: ['🎬', '📹', '🎥'], type: 'videos' },
-    { extensions: ['mp3', 'wav', 'flac'], icons: ['🎵', '🎶', '🔊'], type: 'music' },
-    { extensions: ['zip', 'rar', 'exe', 'dmg'], icons: ['📦', '⚙️', '🔧'], type: 'other' }
+// Create nested folder structure
+const createNestedFolders = (): Folder[] => {
+  return [
+    {
+      id: 'root',
+      name: 'My Drive',
+      path: '',
+      children: ['documents', 'pictures', 'videos', 'music', 'downloads']
+    },
+    // Documents folder structure
+    {
+      id: 'documents',
+      name: 'Documents',
+      parent: 'root',
+      path: 'documents',
+      children: ['projects', 'personal', 'work']
+    },
+    {
+      id: 'projects',
+      name: 'Projects',
+      parent: 'documents',
+      path: 'documents/projects',
+      children: ['2024', 'archived']
+    },
+    {
+      id: '2024',
+      name: '2024',
+      parent: 'projects',
+      path: 'documents/projects/2024',
+      children: ['reports', 'presentations', 'research']
+    },
+    {
+      id: 'reports',
+      name: 'Reports',
+      parent: '2024',
+      path: 'documents/projects/2024/reports',
+      children: ['q1', 'q2', 'q3', 'q4']
+    },
+    {
+      id: 'q1',
+      name: 'Q1',
+      parent: 'reports',
+      path: 'documents/projects/2024/reports/q1',
+      children: []
+    },
+    {
+      id: 'q2',
+      name: 'Q2',
+      parent: 'reports',
+      path: 'documents/projects/2024/reports/q2',
+      children: []
+    },
+    {
+      id: 'presentations',
+      name: 'Presentations',
+      parent: '2024',
+      path: 'documents/projects/2024/presentations',
+      children: []
+    },
+    {
+      id: 'research',
+      name: 'Research',
+      parent: '2024',
+      path: 'documents/projects/2024/research',
+      children: []
+    },
+    {
+      id: 'archived',
+      name: 'Archived',
+      parent: 'projects',
+      path: 'documents/projects/archived',
+      children: ['2023', '2022']
+    },
+    {
+      id: '2023',
+      name: '2023',
+      parent: 'archived',
+      path: 'documents/projects/archived/2023',
+      children: []
+    },
+    {
+      id: 'personal',
+      name: 'Personal',
+      parent: 'documents',
+      path: 'documents/personal',
+      children: ['taxes', 'insurance', 'medical']
+    },
+    {
+      id: 'work',
+      name: 'Work',
+      parent: 'documents',
+      path: 'documents/work',
+      children: ['contracts', 'invoices', 'meetings']
+    },
+    // Pictures folder structure
+    {
+      id: 'pictures',
+      name: 'Pictures',
+      parent: 'root',
+      path: 'pictures',
+      children: ['vacation', 'family', 'events']
+    },
+    {
+      id: 'vacation',
+      name: 'Vacation',
+      parent: 'pictures',
+      path: 'pictures/vacation',
+      children: ['2024-summer', '2023-winter']
+    },
+    // Other root folders
+    {
+      id: 'videos',
+      name: 'Videos',
+      parent: 'root',
+      path: 'videos',
+      children: ['tutorials', 'recordings']
+    },
+    {
+      id: 'music',
+      name: 'Music',
+      parent: 'root',
+      path: 'music',
+      children: ['playlists', 'albums']
+    },
+    {
+      id: 'downloads',
+      name: 'Downloads',
+      parent: 'root',
+      path: 'downloads',
+      children: []
+    }
   ];
+};
 
-  const names = [
-    'Project Proposal', 'Design Assets', 'Meeting Notes', 'Vacation Photos', 'Budget Report',
-    'Marketing Campaign', 'User Research', 'Product Mockup', 'Brand Guidelines', 'Financial Data',
-    'Client Presentation', 'Team Photos', 'Architecture Docs', 'Launch Plan', 'User Feedback',
-    'Analytics Report', 'Design System', 'Roadmap 2024', 'Customer Survey', 'Training Materials',
-    'Performance Metrics', 'Website Backup', 'Social Media Kit', 'Legal Documents', 'Quarterly Review'
-  ];
-
-  const timeStamps = [
-    '2 hours ago', '1 day ago', '3 days ago', '1 week ago', '2 weeks ago', '1 month ago',
-    '2 months ago', '3 months ago', '6 months ago', '1 year ago'
-  ];
-
+// Generate files for different folders
+const generateNestedFiles = (): FileItem[] => {
   const files: FileItem[] = [];
   
-  // Add some folders first
-  for (let i = 0; i < 15; i++) {
-    files.push({
-      id: `folder-${i}`,
-      name: names[i % names.length] + (i > names.length - 1 ? ` ${Math.floor(i / names.length) + 1}` : ''),
-      type: 'folder',
-      lastModified: timeStamps[i % timeStamps.length],
-      icon: '📁',
-      parent: 'root'
-    });
-  }
+  // Root level files and folders (folders are created as FileItems for display)
+  const mockFolders = createNestedFolders();
+  const rootFolders = ['documents', 'pictures', 'videos', 'music', 'downloads'];
+  rootFolders.forEach((folderId, index) => {
+    const folder = mockFolders.find(f => f.id === folderId);
+    if (folder) {
+      files.push({
+        id: folderId,
+        name: folder.name,
+        type: 'folder',
+        lastModified: ['1 day ago', '2 days ago', '1 week ago', '3 days ago', '5 days ago'][index],
+        icon: '📁',
+        parent: 'root',
+        path: ''
+      });
+    }
+  });
 
-  // Add files
-  for (let i = 0; i < 85; i++) {
-    const fileType = fileTypes[i % fileTypes.length];
-    const extension = fileType.extensions[i % fileType.extensions.length];
-    const icon = fileType.icons[i % fileType.icons.length];
-    const name = names[i % names.length];
-    const size = `${(Math.random() * 50 + 0.1).toFixed(1)} MB`;
-    
-    files.push({
-      id: `file-${i}`,
-      name: `${name}${i > names.length - 1 ? ` ${Math.floor(i / names.length) + 1}` : ''}.${extension}`,
+  files.push(
+    {
+      id: 'file-1',
+      name: 'Getting Started.pdf',
       type: 'file',
-      size,
-      lastModified: timeStamps[i % timeStamps.length],
-      icon,
-      parent: 'root'
-    });
-  }
+      size: '2.5 MB',
+      lastModified: '2 hours ago',
+      icon: '📄',
+      parent: 'root',
+      path: ''
+    },
+    {
+      id: 'file-2',
+      name: 'README.txt',
+      type: 'file',
+      size: '1.2 KB',
+      lastModified: '1 day ago',
+      icon: '📝',
+      parent: 'root',
+      path: ''
+    }
+  );
+
+  // Documents folder subfolders
+  const docFolders = ['projects', 'personal', 'work'];
+  docFolders.forEach((folderId, index) => {
+    const folder = mockFolders.find(f => f.id === folderId);
+    if (folder) {
+      files.push({
+        id: folderId,
+        name: folder.name,
+        type: 'folder',
+        lastModified: ['2 weeks ago', '1 month ago', '3 weeks ago'][index],
+        icon: '📁',
+        parent: 'documents',
+        path: 'documents'
+      });
+    }
+  });
+
+  // Projects folder subfolders
+  const projFolders = ['2024', 'archived'];
+  projFolders.forEach((folderId, index) => {
+    const folder = mockFolders.find(f => f.id === folderId);
+    if (folder) {
+      files.push({
+        id: folderId,
+        name: folder.name,
+        type: 'folder',
+        lastModified: ['1 week ago', '6 months ago'][index],
+        icon: '📁',
+        parent: 'projects',
+        path: 'documents/projects'
+      });
+    }
+  });
+
+  // 2024 folder subfolders
+  const year2024Folders = ['reports', 'presentations', 'research'];
+  year2024Folders.forEach((folderId, index) => {
+    const folder = mockFolders.find(f => f.id === folderId);
+    if (folder) {
+      files.push({
+        id: folderId,
+        name: folder.name,
+        type: 'folder',
+        lastModified: ['3 days ago', '1 week ago', '2 weeks ago'][index],
+        icon: '📁',
+        parent: '2024',
+        path: 'documents/projects/2024'
+      });
+    }
+  });
+
+  // Reports folder subfolders
+  const reportsFolders = ['q1', 'q2', 'q3', 'q4'];
+  reportsFolders.forEach((folderId, index) => {
+    const folder = mockFolders.find(f => f.id === folderId);
+    if (folder) {
+      files.push({
+        id: folderId,
+        name: folder.name,
+        type: 'folder',
+        lastModified: ['1 day ago', '1 week ago', '2 weeks ago', '3 weeks ago'][index],
+        icon: '📁',
+        parent: 'reports',
+        path: 'documents/projects/2024/reports'
+      });
+    }
+  });
+
+  // Pictures folder subfolders
+  const picFolders = ['vacation', 'family', 'events'];
+  picFolders.forEach((folderId, index) => {
+    const folder = mockFolders.find(f => f.id === folderId);
+    if (folder) {
+      files.push({
+        id: folderId,
+        name: folder.name,
+        type: 'folder',
+        lastModified: ['2 months ago', '3 months ago', '1 month ago'][index],
+        icon: '📁',
+        parent: 'pictures',
+        path: 'pictures'
+      });
+    }
+  });
+
+  // Documents/Projects/2024/Reports/Q1 files
+  files.push(
+    {
+      id: 'file-3',
+      name: 'Q1 Financial Report.pdf',
+      type: 'file',
+      size: '5.8 MB',
+      lastModified: '3 days ago',
+      icon: '📊',
+      parent: 'q1',
+      path: 'documents/projects/2024/reports/q1'
+    },
+    {
+      id: 'file-4',
+      name: 'Sales Analysis.xlsx',
+      type: 'file',
+      size: '3.2 MB',
+      lastModified: '5 days ago',
+      icon: '📈',
+      parent: 'q1',
+      path: 'documents/projects/2024/reports/q1'
+    },
+    {
+      id: 'file-5',
+      name: 'Market Research.docx',
+      type: 'file',
+      size: '2.1 MB',
+      lastModified: '1 week ago',
+      icon: '📄',
+      parent: 'q1',
+      path: 'documents/projects/2024/reports/q1'
+    }
+  );
+
+  // Documents/Projects/2024/Presentations files
+  files.push(
+    {
+      id: 'file-6',
+      name: 'Company Overview.pptx',
+      type: 'file',
+      size: '15.3 MB',
+      lastModified: '2 weeks ago',
+      icon: '📽️',
+      parent: 'presentations',
+      path: 'documents/projects/2024/presentations'
+    },
+    {
+      id: 'file-7',
+      name: 'Product Demo.pptx',
+      type: 'file',
+      size: '22.1 MB',
+      lastModified: '3 weeks ago',
+      icon: '📽️',
+      parent: 'presentations',
+      path: 'documents/projects/2024/presentations'
+    }
+  );
+
+  // Pictures/Vacation files
+  files.push(
+    {
+      id: 'file-8',
+      name: 'Beach Sunset.jpg',
+      type: 'file',
+      size: '4.7 MB',
+      lastModified: '1 month ago',
+      icon: '🖼️',
+      parent: 'vacation',
+      path: 'pictures/vacation'
+    },
+    {
+      id: 'file-9',
+      name: 'Mountain View.jpg',
+      type: 'file',
+      size: '6.2 MB',
+      lastModified: '1 month ago',
+      icon: '🖼️',
+      parent: 'vacation',
+      path: 'pictures/vacation'
+    }
+  );
 
   return files;
 };
 
-const mockFiles: FileItem[] = generateMockFiles();
-
-const mockFolders: Folder[] = [
-  {
-    id: 'root',
-    name: 'My Drive',
-    children: ['1', '2', '3', '4', '5']
-  },
-  {
-    id: '2',
-    name: 'Design Assets',
-    parent: 'root',
-    children: ['6']
-  },
-  {
-    id: '5',
-    name: 'Documents',
-    parent: 'root',
-    children: []
-  }
-];
+const mockFolders: Folder[] = createNestedFolders();
+const mockFiles: FileItem[] = generateNestedFiles();
 
 export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const params = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   
   const [files] = useState<FileItem[]>(mockFiles);
   const [folders] = useState<Folder[]>(mockFolders);
   const [currentFolder, setCurrentFolder] = useState('root');
+  const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -173,20 +449,25 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
 
   // Initialize state from URL
   useEffect(() => {
-    if (params.folderId) {
-      setCurrentFolder(params.folderId);
+    const pathname = location.pathname;
+    if (pathname.startsWith('/folder/')) {
+      const pathSegments = pathname.replace('/folder/', '').split('/').filter(Boolean);
+      setCurrentPath(pathSegments);
+      
+      // Find the folder that matches this path
+      const targetPath = pathSegments.join('/');
+      const targetFolder = folders.find(f => f.path === targetPath);
+      if (targetFolder) {
+        setCurrentFolder(targetFolder.id);
+      } else if (pathSegments.length === 0) {
+        setCurrentFolder('root');
+        setCurrentPath([]);
+      }
+    } else {
+      setCurrentFolder('root');
+      setCurrentPath([]);
     }
-    
-    const typeParam = searchParams.get('type');
-    if (typeParam) {
-      setCurrentFilter(typeParam);
-    }
-    
-    const queryParam = searchParams.get('q');
-    if (queryParam) {
-      setSearchQuery(queryParam);
-    }
-  }, [params.folderId, searchParams]);
+  }, [location.pathname, folders]);
 
   const openModal = (modal: keyof typeof modals) => {
     setModals(prev => ({ ...prev, [modal]: true }));
@@ -197,34 +478,71 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
   };
 
   const navigateToFolder = (folderId: string) => {
-    setCurrentFolder(folderId);
-    if (folderId === 'root') {
-      navigate('/');
-    } else {
-      navigate(`/folder/${folderId}`);
+    const folder = folders.find(f => f.id === folderId);
+    if (folder) {
+      setCurrentFolder(folderId);
+      if (folderId === 'root') {
+        setCurrentPath([]);
+        navigate('/');
+      } else {
+        const pathSegments = folder.path.split('/').filter(Boolean);
+        setCurrentPath(pathSegments);
+        navigate(`/folder/${folder.path}`);
+      }
     }
+  };
+
+  const navigateToPath = (pathArray: string[]) => {
+    const targetPath = pathArray.join('/');
+    const targetFolder = folders.find(f => f.path === targetPath);
+    
+    if (targetFolder) {
+      setCurrentFolder(targetFolder.id);
+      setCurrentPath(pathArray);
+      navigate(pathArray.length === 0 ? '/' : `/folder/${targetPath}`);
+    } else {
+      // Fallback to root
+      setCurrentFolder('root');
+      setCurrentPath([]);
+      navigate('/');
+    }
+  };
+
+  const getBreadcrumbs = () => {
+    const breadcrumbs: { id: string; name: string; path: string[] }[] = [];
+    
+    for (let i = 0; i <= currentPath.length; i++) {
+      const pathSegments = currentPath.slice(0, i);
+      const pathString = pathSegments.join('/');
+      
+      if (i === 0) {
+        // Root
+        breadcrumbs.push({
+          id: 'root',
+          name: 'My Drive',
+          path: []
+        });
+      } else {
+        const folder = folders.find(f => f.path === pathString);
+        if (folder) {
+          breadcrumbs.push({
+            id: folder.id,
+            name: folder.name,
+            path: pathSegments
+          });
+        }
+      }
+    }
+    
+    return breadcrumbs;
   };
 
   const handleSetCurrentFilter = (filter: string) => {
     setCurrentFilter(filter);
-    const newSearchParams = new URLSearchParams(searchParams);
-    if (filter === 'all') {
-      newSearchParams.delete('type');
-    } else {
-      newSearchParams.set('type', filter);
-    }
-    setSearchParams(newSearchParams);
   };
 
   const handleSetSearchQuery = (query: string) => {
     setSearchQuery(query);
-    const newSearchParams = new URLSearchParams(searchParams);
-    if (query) {
-      newSearchParams.set('q', query);
-    } else {
-      newSearchParams.delete('q');
-    }
-    setSearchParams(newSearchParams);
   };
 
   // Helper function to get filtered files
@@ -296,9 +614,6 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    // Simulate API endpoint call
-    console.log(`API Call: /api/search?q=${encodeURIComponent(query)}`);
-    
     return files.filter(file => 
       file.name.toLowerCase().includes(query.toLowerCase())
     );
@@ -309,6 +624,7 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
       files,
       folders,
       currentFolder,
+      currentPath,
       viewMode,
       selectedItems,
       searchQuery,
@@ -335,7 +651,9 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
       setRenameItem,
       setDeleteItems,
       searchFiles,
-      navigateToFolder
+      navigateToFolder,
+      navigateToPath,
+      getBreadcrumbs
     }}>
       {children}
     </FileManagerContext.Provider>
