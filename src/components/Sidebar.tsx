@@ -3,6 +3,7 @@ import React from 'react';
 import { useFileManager } from '../contexts/FileManagerContext';
 import { Files, Image, FileText, Video, Music, MoreHorizontal, Share, Star, Trash2, BarChart } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import FolderTreeSidebar from './FolderTreeSidebar';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     { id: 'recycle', name: 'Recycle Bin', icon: Trash2, path: '/', filter: 'recycle' },
   ];
 
-  const handleCategoryClick = (categoryId: string, filter?: string) => {
+  const handleCategoryClick = (categoryId: string, filter?: string, path?: string) => {
     if (categoryId === 'dashboard') {
       return; // Navigation handled by Link
     }
@@ -45,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   };
 
   const CategoryItem = ({ item, isActive }: { item: any; isActive: boolean }) => (
-    <Link to={item.path} onClick={() => handleCategoryClick(item.id, item.filter)}>
+    <Link to={item.path + (item.filter && item.filter !== 'all' ? `?type=${item.filter}` : '')} onClick={() => handleCategoryClick(item.id, item.filter, item.path)}>
       <div
         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 group relative ${
           isActive
@@ -91,13 +92,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   Categories
                 </h3>
                 <div className="space-y-1">
-                  {mainCategories.map((category) => (
-                    <CategoryItem
-                      key={category.id}
-                      item={category}
-                      isActive={location.pathname.startsWith('/folder') ? false : location.pathname === '/' && currentFilter === category.filter}
-                    />
-                  ))}
+                  {mainCategories.map((category) => {
+                    const isInFolder = location.pathname.startsWith('/folder');
+                    const hasTypeParam = location.search.includes(`type=${category.filter}`);
+                    const isRootWithCorrectFilter = location.pathname === '/' && currentFilter === category.filter;
+                    const isActive = !isInFolder && (isRootWithCorrectFilter || hasTypeParam);
+                    
+                    return (
+                      <CategoryItem
+                        key={category.id}
+                        item={category}
+                        isActive={isActive}
+                      />
+                    );
+                  })}
                 </div>
               </div>
 
@@ -107,14 +115,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   Actions
                 </h3>
                 <div className="space-y-1">
-                  {actionItems.map((item) => (
-                    <CategoryItem
-                      key={item.id}
-                      item={item}
-                      isActive={item.id === 'dashboard' ? location.pathname === '/dashboard' : location.pathname === '/' && currentFilter === item.filter}
-                    />
-                  ))}
+                  {actionItems.map((item) => {
+                    const isActive = item.id === 'dashboard' 
+                      ? location.pathname === '/dashboard'
+                      : !location.pathname.startsWith('/folder') && location.pathname === '/' && currentFilter === item.filter;
+                    
+                    return (
+                      <CategoryItem
+                        key={item.id}
+                        item={item}
+                        isActive={isActive}
+                      />
+                    );
+                  })}
                 </div>
+              </div>
+
+              {/* Folder Tree */}
+              <div>
+                <FolderTreeSidebar />
               </div>
             </div>
           </div>
