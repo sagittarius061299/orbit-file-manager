@@ -10,33 +10,42 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
-  const { currentFolder, setCurrentFolder } = useFileManager();
+  const { currentFolder, setCurrentFolder, currentFilter, setCurrentFilter } = useFileManager();
   const location = useLocation();
 
   const mainCategories = [
-    { id: 'all', name: 'All Files', icon: Files, isDefault: true, path: '/' },
-    { id: 'pictures', name: 'Pictures', icon: Image, path: '/' },
-    { id: 'documents', name: 'Documents', icon: FileText, path: '/' },
-    { id: 'videos', name: 'Videos', icon: Video, path: '/' },
-    { id: 'music', name: 'Music', icon: Music, path: '/' },
-    { id: 'other', name: 'Other', icon: MoreHorizontal, path: '/' },
+    { id: 'all', name: 'All Files', icon: Files, isDefault: true, path: '/', filter: 'all' },
+    { id: 'pictures', name: 'Pictures', icon: Image, path: '/', filter: 'pictures' },
+    { id: 'documents', name: 'Documents', icon: FileText, path: '/', filter: 'documents' },
+    { id: 'videos', name: 'Videos', icon: Video, path: '/', filter: 'videos' },
+    { id: 'music', name: 'Music', icon: Music, path: '/', filter: 'music' },
+    { id: 'other', name: 'Other', icon: MoreHorizontal, path: '/', filter: 'other' },
   ];
 
   const actionItems = [
     { id: 'dashboard', name: 'Dashboard', icon: BarChart, path: '/dashboard' },
-    { id: 'share', name: 'Share', icon: Share, path: '/' },
-    { id: 'starred', name: 'Starred', icon: Star, path: '/' },
-    { id: 'recycle', name: 'Recycle Bin', icon: Trash2, path: '/' },
+    { id: 'share', name: 'Share', icon: Share, path: '/', filter: 'share' },
+    { id: 'starred', name: 'Starred', icon: Star, path: '/', filter: 'starred' },
+    { id: 'recycle', name: 'Recycle Bin', icon: Trash2, path: '/', filter: 'recycle' },
   ];
 
-  const handleCategoryClick = (categoryId: string) => {
-    if (categoryId !== 'dashboard') {
-      setCurrentFolder(categoryId);
+  const handleCategoryClick = (categoryId: string, filter?: string) => {
+    if (categoryId === 'dashboard') {
+      return; // Navigation handled by Link
+    }
+    
+    if (filter) {
+      setCurrentFilter(filter);
+    }
+    
+    // If not on root folder, navigate to root when changing filters
+    if (currentFolder !== 'root') {
+      setCurrentFolder('root');
     }
   };
 
   const CategoryItem = ({ item, isActive }: { item: any; isActive: boolean }) => (
-    <Link to={item.path} onClick={() => handleCategoryClick(item.id)}>
+    <Link to={item.path} onClick={() => handleCategoryClick(item.id, item.filter)}>
       <div
         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 group relative ${
           isActive
@@ -86,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                     <CategoryItem
                       key={category.id}
                       item={category}
-                      isActive={location.pathname === '/' && (currentFolder === category.id || (category.isDefault && currentFolder === 'root'))}
+                      isActive={location.pathname.startsWith('/folder') ? false : location.pathname === '/' && currentFilter === category.filter}
                     />
                   ))}
                 </div>
@@ -102,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                     <CategoryItem
                       key={item.id}
                       item={item}
-                      isActive={item.id === 'dashboard' ? location.pathname === '/dashboard' : currentFolder === item.id}
+                      isActive={item.id === 'dashboard' ? location.pathname === '/dashboard' : location.pathname === '/' && currentFilter === item.filter}
                     />
                   ))}
                 </div>

@@ -1,5 +1,6 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 
 export interface FileItem {
   id: string;
@@ -44,6 +45,10 @@ interface FileManagerContextType {
   setPreviewFile: (file: FileItem | null) => void;
   setRenameItem: (item: FileItem | null) => void;
   setDeleteItems: (items: FileItem[]) => void;
+  searchFiles: (query: string) => Promise<FileItem[]>;
+  navigateToFolder: (folderId: string) => void;
+  setCurrentFilter: (filter: string) => void;
+  currentFilter: string;
 }
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(undefined);
@@ -125,12 +130,17 @@ const mockFolders: Folder[] = [
 ];
 
 export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const params = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
   const [files] = useState<FileItem[]>(mockFiles);
   const [folders] = useState<Folder[]>(mockFolders);
   const [currentFolder, setCurrentFolder] = useState('root');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentFilter, setCurrentFilter] = useState('all');
   const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
   const [renameItem, setRenameItem] = useState<FileItem | null>(null);
   const [deleteItems, setDeleteItems] = useState<FileItem[]>([]);
@@ -142,12 +152,73 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
     delete: false
   });
 
+  // Initialize state from URL
+  useEffect(() => {
+    if (params.folderId) {
+      setCurrentFolder(params.folderId);
+    }
+    
+    const typeParam = searchParams.get('type');
+    if (typeParam) {
+      setCurrentFilter(typeParam);
+    }
+    
+    const queryParam = searchParams.get('q');
+    if (queryParam) {
+      setSearchQuery(queryParam);
+    }
+  }, [params.folderId, searchParams]);
+
   const openModal = (modal: keyof typeof modals) => {
     setModals(prev => ({ ...prev, [modal]: true }));
   };
 
   const closeModal = (modal: keyof typeof modals) => {
     setModals(prev => ({ ...prev, [modal]: false }));
+  };
+
+  const navigateToFolder = (folderId: string) => {
+    setCurrentFolder(folderId);
+    if (folderId === 'root') {
+      navigate('/');
+    } else {
+      navigate(`/folder/${folderId}`);
+    }
+  };
+
+  const handleSetCurrentFilter = (filter: string) => {
+    setCurrentFilter(filter);
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (filter === 'all') {
+      newSearchParams.delete('type');
+    } else {
+      newSearchParams.set('type', filter);
+    }
+    setSearchParams(newSearchParams);
+  };
+
+  const handleSetSearchQuery = (query: string) => {
+    setSearchQuery(query);
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (query) {
+      newSearchParams.set('q', query);
+    } else {
+      newSearchParams.delete('q');
+    }
+    setSearchParams(newSearchParams);
+  };
+
+  // Simulate API search functionality
+  const searchFiles = async (query: string): Promise<FileItem[]> => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Simulate API endpoint call
+    console.log(`API Call: /api/search?q=${encodeURIComponent(query)}`);
+    
+    return files.filter(file => 
+      file.name.toLowerCase().includes(query.toLowerCase())
+    );
   };
 
   return (
@@ -158,19 +229,23 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
       viewMode,
       selectedItems,
       searchQuery,
+      currentFilter,
       modals,
       previewFile,
       renameItem,
       deleteItems,
-      setCurrentFolder,
+      setCurrentFolder: navigateToFolder,
       setViewMode,
       setSelectedItems,
-      setSearchQuery,
+      setSearchQuery: handleSetSearchQuery,
+      setCurrentFilter: handleSetCurrentFilter,
       openModal,
       closeModal,
       setPreviewFile,
       setRenameItem,
-      setDeleteItems
+      setDeleteItems,
+      searchFiles,
+      navigateToFolder
     }}>
       {children}
     </FileManagerContext.Provider>

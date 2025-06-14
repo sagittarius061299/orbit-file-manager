@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -82,7 +83,23 @@ const recentFiles = [
 ];
 
 const Dashboard = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [timeRange, setTimeRange] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
+
+  // Initialize time range from URL
+  useEffect(() => {
+    const viewParam = searchParams.get('view');
+    if (viewParam && ['daily', 'weekly', 'monthly'].includes(viewParam)) {
+      setTimeRange(viewParam as 'daily' | 'weekly' | 'monthly');
+    }
+  }, [searchParams]);
+
+  const handleTimeRangeChange = (range: 'daily' | 'weekly' | 'monthly') => {
+    setTimeRange(range);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('view', range);
+    setSearchParams(newSearchParams);
+  };
 
   const summaryCards = [
     {
@@ -128,21 +145,21 @@ const Dashboard = () => {
             <Button
               variant={timeRange === 'daily' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setTimeRange('daily')}
+              onClick={() => handleTimeRangeChange('daily')}
             >
               Daily
             </Button>
             <Button
               variant={timeRange === 'weekly' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setTimeRange('weekly')}
+              onClick={() => handleTimeRangeChange('weekly')}
             >
               Weekly
             </Button>
             <Button
               variant={timeRange === 'monthly' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setTimeRange('monthly')}
+              onClick={() => handleTimeRangeChange('monthly')}
             >
               Monthly
             </Button>

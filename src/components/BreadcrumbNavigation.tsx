@@ -4,7 +4,7 @@ import { useFileManager } from '../contexts/FileManagerContext';
 import { ChevronRight, Home } from 'lucide-react';
 
 const BreadcrumbNavigation: React.FC = () => {
-  const { folders, currentFolder, setCurrentFolder } = useFileManager();
+  const { folders, currentFolder, navigateToFolder } = useFileManager();
 
   const getBreadcrumbs = () => {
     const breadcrumbs = [];
@@ -28,7 +28,7 @@ const BreadcrumbNavigation: React.FC = () => {
   return (
     <nav className="flex items-center space-x-2 text-sm">
       <button
-        onClick={() => setCurrentFolder('root')}
+        onClick={() => navigateToFolder('root')}
         className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
           currentFolder === 'root'
             ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30'
@@ -43,7 +43,7 @@ const BreadcrumbNavigation: React.FC = () => {
         <React.Fragment key={folder.id}>
           <ChevronRight className="w-4 h-4 text-gray-400" />
           <button
-            onClick={() => setCurrentFolder(folder.id)}
+            onClick={() => navigateToFolder(folder.id)}
             className={`px-2 py-1 rounded-md transition-colors ${
               index === breadcrumbs.length - 1
                 ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30'

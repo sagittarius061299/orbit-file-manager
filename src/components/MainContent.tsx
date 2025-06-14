@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useFileManager } from '../contexts/FileManagerContext';
+import { useFileManager, FileItem } from '../contexts/FileManagerContext';
 import FileGrid from './FileGrid';
 import FileList from './FileList';
 import BreadcrumbNavigation from './BreadcrumbNavigation';
@@ -10,14 +10,34 @@ interface MainContentProps {
 }
 
 const MainContent: React.FC<MainContentProps> = ({ sidebarOpen }) => {
-  const { viewMode, files, currentFolder, searchQuery } = useFileManager();
+  const { viewMode, files, currentFolder, searchQuery, currentFilter } = useFileManager();
 
-  // Filter files based on current folder and search query
+  // Helper function to determine file type
+  const getFileType = (file: FileItem) => {
+    if (file.type === 'folder') return 'folder';
+    
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension || '')) return 'pictures';
+    if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'].includes(extension || '')) return 'videos';
+    if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(extension || '')) return 'documents';
+    if (['mp3', 'wav', 'flac', 'aac', 'ogg'].includes(extension || '')) return 'music';
+    return 'other';
+  };
+
+  // Filter files based on current folder, search query, and file type filter
   const filteredFiles = files.filter(file => {
     const matchesFolder = file.parent === currentFolder;
     const matchesSearch = searchQuery === '' || 
       file.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFolder && matchesSearch;
+    
+    // Apply type filter
+    let matchesFilter = true;
+    if (currentFilter !== 'all') {
+      const fileType = getFileType(file);
+      matchesFilter = fileType === currentFilter || file.type === 'folder';
+    }
+    
+    return matchesFolder && matchesSearch && matchesFilter;
   });
 
   return (
