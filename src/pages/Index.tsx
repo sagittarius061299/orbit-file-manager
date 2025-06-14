@@ -1,13 +1,39 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import { FileManagerProvider } from '../contexts/FileManagerContext';
+import Sidebar from '../components/Sidebar';
+import TopNavigation from '../components/TopNavigation';
+import MainContent from '../components/MainContent';
+import FloatingActionButton from '../components/FloatingActionButton';
+import CreateFolderModal from '../components/modals/CreateFolderModal';
+import UploadModal from '../components/modals/UploadModal';
+import FilePreviewModal from '../components/modals/FilePreviewModal';
+import RenameModal from '../components/modals/RenameModal';
+import DeleteConfirmModal from '../components/modals/DeleteConfirmModal';
 
 const Index = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <FileManagerProvider>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex w-full">
+        <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+        
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TopNavigation onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} />
+          <MainContent sidebarOpen={sidebarOpen} />
+        </div>
+
+        <FloatingActionButton />
+        
+        {/* Modals */}
+        <CreateFolderModal />
+        <UploadModal />
+        <FilePreviewModal />
+        <RenameModal />
+        <DeleteConfirmModal />
       </div>
-    </div>
+    </FileManagerProvider>
   );
 };
 
