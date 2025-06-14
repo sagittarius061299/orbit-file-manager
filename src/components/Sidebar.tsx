@@ -87,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           </div>
           
           {/* Content - Scrollable */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <div className="flex-1 overflow-y-auto sidebar-scrollbar lg:sidebar-no-scroll">
             <div className="p-4 space-y-8">
               {/* Main Categories */}
               <div>
