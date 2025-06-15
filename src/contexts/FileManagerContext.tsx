@@ -360,6 +360,26 @@ const generateNestedFiles = (): FileItem[] => {
       icon: '📄',
       parent: 'q1',
       path: 'documents/projects/2024/reports/q1'
+    },
+    {
+      id: 'file-doc-1',
+      name: 'Business Plan.txt',
+      type: 'file',
+      size: '45 KB',
+      lastModified: '4 days ago',
+      icon: '📝',
+      parent: 'q1',
+      path: 'documents/projects/2024/reports/q1'
+    },
+    {
+      id: 'file-doc-2',
+      name: 'Meeting Notes.csv',
+      type: 'file',
+      size: '120 KB',
+      lastModified: '2 days ago',
+      icon: '📊',
+      parent: 'q1',
+      path: 'documents/projects/2024/reports/q1'
     }
   );
 
@@ -519,6 +539,244 @@ const generateNestedFiles = (): FileItem[] => {
     }
   );
 
+  // Add root level video files
+  files.push(
+    {
+      id: 'file-vid-1',
+      name: 'Project Demo.mp4',
+      type: 'file',
+      size: '125 MB',
+      lastModified: '3 days ago',
+      icon: '🎥',
+      parent: 'root',
+      path: ''
+    },
+    {
+      id: 'file-vid-2',
+      name: 'Tutorial Video.mov',
+      type: 'file',
+      size: '89 MB',
+      lastModified: '1 week ago',
+      icon: '🎥',
+      parent: 'root',
+      path: ''
+    }
+  );
+
+  // Add root level music files
+  files.push(
+    {
+      id: 'file-music-1',
+      name: 'Background Music.mp3',
+      type: 'file',
+      size: '8.2 MB',
+      lastModified: '5 days ago',
+      icon: '🎵',
+      parent: 'root',
+      path: ''
+    },
+    {
+      id: 'file-music-2',
+      name: 'Podcast Episode.wav',
+      type: 'file',
+      size: '45 MB',
+      lastModified: '2 weeks ago',
+      icon: '🎵',
+      parent: 'root',
+      path: ''
+    },
+    {
+      id: 'file-music-3',
+      name: 'Piano Recording.flac',
+      type: 'file',
+      size: '25 MB',
+      lastModified: '1 month ago',
+      icon: '🎵',
+      parent: 'root',
+      path: ''
+    }
+  );
+
+  // Add root level "other" files
+  files.push(
+    {
+      id: 'file-other-1',
+      name: 'Software Installer.exe',
+      type: 'file',
+      size: '156 MB',
+      lastModified: '1 week ago',
+      icon: '⚙️',
+      parent: 'root',
+      path: ''
+    },
+    {
+      id: 'file-other-2',
+      name: 'Project Archive.zip',
+      type: 'file',
+      size: '34 MB',
+      lastModified: '4 days ago',
+      icon: '🗜️',
+      parent: 'root',
+      path: ''
+    },
+    {
+      id: 'file-other-3',
+      name: 'Mobile App.apk',
+      type: 'file',
+      size: '78 MB',
+      lastModified: '2 weeks ago',
+      icon: '📱',
+      parent: 'root',
+      path: ''
+    },
+    {
+      id: 'file-other-4',
+      name: 'Config Settings.json',
+      type: 'file',
+      size: '12 KB',
+      lastModified: '3 days ago',
+      icon: '⚙️',
+      parent: 'root',
+      path: ''
+    }
+  );
+
+  // Add more videos in videos folder
+  files.push(
+    {
+      id: 'file-vid-3',
+      name: 'Conference Recording.mp4',
+      type: 'file',
+      size: '234 MB',
+      lastModified: '1 week ago',
+      icon: '🎥',
+      parent: 'videos',
+      path: 'videos'
+    },
+    {
+      id: 'file-vid-4',
+      name: 'Screen Recording.avi',
+      type: 'file',
+      size: '156 MB',
+      lastModified: '3 days ago',
+      icon: '🎥',
+      parent: 'videos',
+      path: 'videos'
+    },
+    {
+      id: 'file-vid-5',
+      name: 'Training Material.mkv',
+      type: 'file',
+      size: '567 MB',
+      lastModified: '2 weeks ago',
+      icon: '🎥',
+      parent: 'videos',
+      path: 'videos'
+    }
+  );
+
+  // Add more music in music folder
+  files.push(
+    {
+      id: 'file-music-4',
+      name: 'Album Track 01.mp3',
+      type: 'file',
+      size: '6.8 MB',
+      lastModified: '1 week ago',
+      icon: '🎵',
+      parent: 'music',
+      path: 'music'
+    },
+    {
+      id: 'file-music-5',
+      name: 'Nature Sounds.ogg',
+      type: 'file',
+      size: '12 MB',
+      lastModified: '5 days ago',
+      icon: '🎵',
+      parent: 'music',
+      path: 'music'
+    },
+    {
+      id: 'file-music-6',
+      name: 'Voice Memo.aac',
+      type: 'file',
+      size: '3.2 MB',
+      lastModified: '2 days ago',
+      icon: '🎵',
+      parent: 'music',
+      path: 'music'
+    }
+  );
+
+  // Add more documents in documents folder
+  files.push(
+    {
+      id: 'file-doc-3',
+      name: 'Annual Report.pdf',
+      type: 'file',
+      size: '8.5 MB',
+      lastModified: '1 week ago',
+      icon: '📄',
+      parent: 'documents',
+      path: 'documents'
+    },
+    {
+      id: 'file-doc-4',
+      name: 'Budget Spreadsheet.xls',
+      type: 'file',
+      size: '2.1 MB',
+      lastModified: '3 days ago',
+      icon: '📊',
+      parent: 'documents',
+      path: 'documents'
+    },
+    {
+      id: 'file-doc-5',
+      name: 'Team Presentation.ppt',
+      type: 'file',
+      size: '15 MB',
+      lastModified: '5 days ago',
+      icon: '📽️',
+      parent: 'documents',
+      path: 'documents'
+    }
+  );
+
+  // Add more images in different formats
+  files.push(
+    {
+      id: 'file-pic-4',
+      name: 'Logo Design.gif',
+      type: 'file',
+      size: '1.2 MB',
+      lastModified: '1 week ago',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures'
+    },
+    {
+      id: 'file-pic-5',
+      name: 'Banner Image.webp',
+      type: 'file',
+      size: '890 KB',
+      lastModified: '4 days ago',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures'
+    },
+    {
+      id: 'file-pic-6',
+      name: 'Icon Set.bmp',
+      type: 'file',
+      size: '3.4 MB',
+      lastModified: '2 weeks ago',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures'
+    }
+  );
+
   return files;
 };
 
@@ -663,19 +921,40 @@ export const FileManagerProvider: React.FC<{ children: ReactNode }> = ({ childre
       // Apply type filter
       let matchesFilter = true;
       if (currentFilter !== 'all') {
+        // Hide folders for all categories except "all"
+        if (file.type === 'folder') {
+          return false;
+        }
+        
         const getFileType = (file: FileItem) => {
-          if (file.type === 'folder') return 'folder';
-          
           const extension = file.name.split('.').pop()?.toLowerCase();
-          if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension || '')) return 'pictures';
-          if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'].includes(extension || '')) return 'videos';
-          if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(extension || '')) return 'documents';
-          if (['mp3', 'wav', 'flac', 'aac', 'ogg'].includes(extension || '')) return 'music';
+          
+          // Pictures/Images
+          if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tiff', 'ico'].includes(extension || '')) {
+            return 'pictures';
+          }
+          
+          // Videos
+          if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v', '3gp'].includes(extension || '')) {
+            return 'videos';
+          }
+          
+          // Documents
+          if (['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt', 'xls', 'xlsx', 'csv', 'ppt', 'pptx', 'odp', 'ods'].includes(extension || '')) {
+            return 'documents';
+          }
+          
+          // Music/Audio
+          if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma'].includes(extension || '')) {
+            return 'music';
+          }
+          
+          // Everything else goes to "other"
           return 'other';
         };
         
         const fileType = getFileType(file);
-        matchesFilter = fileType === currentFilter || file.type === 'folder';
+        matchesFilter = fileType === currentFilter;
       }
       
       return matchesFolder && matchesSearch && matchesFilter;
