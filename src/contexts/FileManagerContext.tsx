@@ -11,6 +11,7 @@ export interface FileItem {
   icon: string;
   parent?: string;
   path: string; // Full path like "documents/projects/2024"
+  thumbnail?: string; // Optional thumbnail URL for images
 }
 
 export interface Folder {
@@ -740,6 +741,109 @@ const generateNestedFiles = (): FileItem[] => {
       icon: '📽️',
       parent: 'documents',
       path: 'documents'
+    }
+  );
+
+  // Dragon Ball Super image collection
+  files.push(
+    {
+      id: 'dbs-img-1',
+      name: 'Dragon Ball Super Poster.jpg',
+      type: 'file',
+      size: '1.2 MB',
+      lastModified: '2023-05-10',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://m.media-amazon.com/images/S/pv-target-images/0eed584f7827064d74d4e892a66d827b7293c131f3aeb2046e7ed59ddd17b562._SX1080_FMjpg_.jpg'
+    },
+    {
+      id: 'dbs-img-2',
+      name: 'DBS Character Art.jpg',
+      type: 'file',
+      size: '650 KB',
+      lastModified: '2022-11-20',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://static.wikia.nocookie.net/polski-dubbing/images/2/2a/Dragon_Ball_Super.jpg/revision/latest?cb=20181012082258&path-prefix=pl'
+    },
+    {
+      id: 'dbs-img-3',
+      name: 'Super Saiyan Blue.jpg',
+      type: 'file',
+      size: '900 KB',
+      lastModified: '2021-05-15',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://pananimacja.pl/wp-content/uploads/2021/05/dragon-ball-super-1.jpg'
+    },
+    {
+      id: 'dbs-img-4',
+      name: 'Tournament Power.jpg',
+      type: 'file',
+      size: '1.1 MB',
+      lastModified: '2022-03-10',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://i.ytimg.com/vi/dHtXpETZGSo/maxresdefault.jpg'
+    },
+    {
+      id: 'dbs-img-5',
+      name: 'Goku vs Jiren.jpg',
+      type: 'file',
+      size: '750 KB',
+      lastModified: '2023-07-22',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://m.media-amazon.com/images/M/MV5BNmZjYWI2MWQtYmJiZC00MTkwLWIwNGQtNTRjYzRmNmYyZjA5XkEyXkFqcGc@._V1_.jpg'
+    },
+    {
+      id: 'dbs-img-6',
+      name: 'New Episodes.jpg',
+      type: 'file',
+      size: '1.0 MB',
+      lastModified: '2022-07-15',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://static.android.com.pl/uploads/2022/07/dragon-ball-super-nowe-odcinki.jpg'
+    },
+    {
+      id: 'dbs-img-7',
+      name: 'Anime Wallpaper.png',
+      type: 'file',
+      size: '850 KB',
+      lastModified: '2018-01-20',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://skomplikowane.pl/wp-content/uploads/2018/01/Dragon-Ball-Super-e1516697095300.png'
+    },
+    {
+      id: 'dbs-img-8',
+      name: 'Ultra Instinct.jpg',
+      type: 'file',
+      size: '950 KB',
+      lastModified: '2022-06-18',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzQBKiVyfPwPfPCrRVDtrVmQw7D-yFGs4fbA&s'
+    },
+    {
+      id: 'dbs-img-9',
+      name: 'Epic Battle Scene.jpg',
+      type: 'file',
+      size: '1.3 MB',
+      lastModified: '2023-11-11',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures',
+      thumbnail: 'https://external-preview.redd.it/RSYLyODh7erDHadQFDnOUMPQXs09aHfhwamXIMAXY9g.jpg?width=640&crop=smart&auto=webp&s=167442a0c6e876240c8b294fe1c690804bd2f01e'
     }
   );
 

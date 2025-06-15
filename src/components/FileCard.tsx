@@ -124,7 +124,21 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
       <div className="p-4" onClick={handleFileClick}>
         {/* File preview/thumbnail */}
         <div className="aspect-square bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5 rounded-xl flex items-center justify-center mb-3 group-hover:scale-[1.02] transition-all duration-300 shadow-inner border border-border/20 relative overflow-hidden">
-          {isImageFile() || isVideoFile() ? (
+          {file.thumbnail ? (
+            <img 
+              src={file.thumbnail} 
+              alt={file.name}
+              className="absolute inset-0 w-full h-full object-cover rounded-xl"
+              loading="lazy"
+              onError={(e) => {
+                // Fallback to icon if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'flex';
+              }}
+            />
+          ) : isImageFile() || isVideoFile() ? (
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
               <div className="text-4xl opacity-80">{file.icon}</div>
               <div className="absolute inset-0 bg-black/10 rounded-xl"></div>
@@ -132,6 +146,12 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
           ) : (
             <div className="text-5xl opacity-90 drop-shadow-lg transform group-hover:scale-110 transition-transform duration-300">
               {file.icon}
+            </div>
+          )}
+          {/* Fallback icon for failed thumbnail loads */}
+          {file.thumbnail && (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center" style={{ display: 'none' }}>
+              <div className="text-4xl opacity-80">{file.icon}</div>
             </div>
           )}
         </div>
