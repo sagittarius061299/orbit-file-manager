@@ -81,7 +81,10 @@
     "fileType": "Type",
     "lastModified": "Last Modified",
     "created": "Created",
-    "actions": "Actions"
+    "actions": "Actions",
+    "filePreview": "File Preview",
+    "previewNotAvailable": "Preview not available for this file type",
+    "navigationHint": "Use arrow keys or navigation buttons to browse images"
   },
   "actions": {
     "upload": "Upload",
@@ -142,6 +145,8 @@
     "error": "Error",
     "success": "Success",
     "warning": "Warning",
-    "info": "Info"
+    "info": "Info",
+    "unknown": "Unknown",
+    "of": "of"
   }
 }

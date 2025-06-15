@@ -387,6 +387,40 @@ const generateNestedFiles = (): FileItem[] => {
     }
   );
 
+  // Pictures folder files (main level)
+  files.push(
+    {
+      id: 'file-pic-1',
+      name: 'Profile Photo.jpg',
+      type: 'file',
+      size: '2.3 MB',
+      lastModified: '2 days ago',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures'
+    },
+    {
+      id: 'file-pic-2',
+      name: 'Desktop Wallpaper.png',
+      type: 'file',
+      size: '8.1 MB',
+      lastModified: '1 week ago',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures'
+    },
+    {
+      id: 'file-pic-3',
+      name: 'Screenshot.png',
+      type: 'file',
+      size: '1.9 MB',
+      lastModified: '3 days ago',
+      icon: '🖼️',
+      parent: 'pictures',
+      path: 'pictures'
+    }
+  );
+
   // Pictures/Vacation files
   files.push(
     {
@@ -408,6 +442,80 @@ const generateNestedFiles = (): FileItem[] => {
       icon: '🖼️',
       parent: 'vacation',
       path: 'pictures/vacation'
+    },
+    {
+      id: 'file-vac-1',
+      name: 'Ocean Waves.jpg',
+      type: 'file',
+      size: '5.8 MB',
+      lastModified: '1 month ago',
+      icon: '🖼️',
+      parent: 'vacation',
+      path: 'pictures/vacation'
+    },
+    {
+      id: 'file-vac-2',
+      name: 'Tropical Paradise.jpg',
+      type: 'file',
+      size: '7.2 MB',
+      lastModified: '1 month ago',
+      icon: '🖼️',
+      parent: 'vacation',
+      path: 'pictures/vacation'
+    },
+    {
+      id: 'file-vac-3',
+      name: 'Island Adventure.jpg',
+      type: 'file',
+      size: '6.4 MB',
+      lastModified: '1 month ago',
+      icon: '🖼️',
+      parent: 'vacation',
+      path: 'pictures/vacation'
+    },
+    {
+      id: 'file-vac-4',
+      name: 'City Skyline.jpg',
+      type: 'file',
+      size: '3.9 MB',
+      lastModified: '1 month ago',
+      icon: '🖼️',
+      parent: 'vacation',
+      path: 'pictures/vacation'
+    }
+  );
+
+  // Pictures/Family files
+  files.push(
+    {
+      id: 'file-fam-1',
+      name: 'Family Gathering.jpg',
+      type: 'file',
+      size: '5.2 MB',
+      lastModified: '2 weeks ago',
+      icon: '🖼️',
+      parent: 'family',
+      path: 'pictures/family'
+    },
+    {
+      id: 'file-fam-2',
+      name: 'Birthday Party.jpg',
+      type: 'file',
+      size: '4.8 MB',
+      lastModified: '3 weeks ago',
+      icon: '🖼️',
+      parent: 'family',
+      path: 'pictures/family'
+    },
+    {
+      id: 'file-fam-3',
+      name: 'Wedding Photos.jpg',
+      type: 'file',
+      size: '9.1 MB',
+      lastModified: '1 month ago',
+      icon: '🖼️',
+      parent: 'family',
+      path: 'pictures/family'
     }
   );
 

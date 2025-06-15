@@ -81,7 +81,10 @@
     "fileType": "Loại",
     "lastModified": "Sửa Đổi Cuối",
     "created": "Tạo",
-    "actions": "Hành Động"
+    "actions": "Hành Động",
+    "filePreview": "Xem Trước Tệp",
+    "previewNotAvailable": "Không thể xem trước loại tệp này",
+    "navigationHint": "Sử dụng phím mũi tên hoặc nút điều hướng để duyệt hình ảnh"
   },
   "actions": {
     "upload": "Tải Lên",
@@ -142,6 +145,8 @@
     "error": "Lỗi",
     "success": "Thành Công",
     "warning": "Cảnh Báo",
-    "info": "Thông Tin"
+    "info": "Thông Tin",
+    "unknown": "Không rõ",
+    "of": "của"
   }
 }
