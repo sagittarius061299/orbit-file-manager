@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFileManager } from '../contexts/FileManagerContext';
 import { Menu, Search, Upload, Grid, List, User, Settings, LogOut, Sun, Moon } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -7,6 +8,7 @@ import { Input } from '../components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useTheme } from 'next-themes';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface TopNavigationProps {
   onSidebarToggle: () => void;
@@ -17,6 +19,7 @@ interface TopNavigationProps {
 const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSidebarCollapse, sidebarCollapsed }) => {
   const { searchQuery, setSearchQuery, viewMode, setViewMode, openModal } = useFileManager();
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 h-16 glass-subtle border-b border-border/30 flex items-center gap-4 px-6 backdrop-blur-xl z-30 flex-shrink-0 shadow-md">
@@ -48,7 +51,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             type="text"
-            placeholder="Search files and folders..."
+            placeholder={t('navigation.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-12 glass-subtle border border-border/40 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 rounded-xl h-10 transition-all duration-300 shadow-sm hover:shadow-md hover-glow font-medium placeholder:text-muted-foreground/70"
@@ -89,6 +92,9 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
         {/* Separator */}
         <div className="hidden md:block w-px h-6 bg-gradient-to-b from-transparent via-border/60 to-transparent mx-2"></div>
 
+        {/* Language Switcher */}
+        <LanguageSwitcher />
+
         {/* Theme toggle */}
         <Button
           variant="ghost"
@@ -98,7 +104,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
         >
           <Sun className="h-4 w-4 rotate-0 scale-100 transition-all duration-300 dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all duration-300 dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
+          <span className="sr-only">{t('navigation.toggleTheme')}</span>
         </Button>
 
         {/* User menu */}
@@ -115,8 +121,8 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 glass-card border border-border/40 shadow-xl rounded-2xl p-2" align="end">
             <div className="px-3 py-3 border-b border-border/30">
-              <p className="text-sm font-semibold text-foreground">John Doe</p>
-              <p className="text-xs text-muted-foreground">john.doe@example.com</p>
+              <p className="text-sm font-semibold text-foreground">{t('navigation.user.profile')}</p>
+              <p className="text-xs text-muted-foreground">{t('navigation.user.email')}</p>
             </div>
             <DropdownMenuSeparator />
             {/* Mobile view toggle - show only on small screens */}
@@ -126,18 +132,18 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onSidebarToggle, onSideba
                 onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
               >
                 {viewMode === 'grid' ? <List className="w-4 h-4 mr-2" /> : <Grid className="w-4 h-4 mr-2" />}
-                {viewMode === 'grid' ? 'List View' : 'Grid View'}
+                {viewMode === 'grid' ? t('navigation.user.listView') : t('navigation.user.gridView')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </div>
             <DropdownMenuItem className="cursor-pointer rounded-lg hover:bg-accent/60 transition-colors duration-200 font-medium">
               <Settings className="w-4 h-4 mr-2" />
-              Settings
+              {t('navigation.user.settings')}
             </DropdownMenuItem>
             <DropdownMenuSeparator className="my-2" />
             <DropdownMenuItem className="cursor-pointer text-destructive rounded-lg hover:bg-destructive/10 transition-colors duration-200 font-medium">
               <LogOut className="w-4 h-4 mr-2" />
-              Sign out
+              {t('navigation.user.signOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

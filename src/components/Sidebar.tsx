@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFileManager } from '../contexts/FileManagerContext';
 import { Files, Image, FileText, Video, Music, MoreHorizontal, Share, Star, Trash2, BarChart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -17,21 +18,22 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollapsedChange }) => {
   const { currentFolder, setCurrentFolder, currentFilter, setCurrentFilter } = useFileManager();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const mainCategories = [
-    { id: 'all', name: 'All Files', icon: Files, isDefault: true, path: '/', filter: 'all' },
-    { id: 'pictures', name: 'Pictures', icon: Image, path: '/', filter: 'pictures' },
-    { id: 'documents', name: 'Documents', icon: FileText, path: '/', filter: 'documents' },
-    { id: 'videos', name: 'Videos', icon: Video, path: '/', filter: 'videos' },
-    { id: 'music', name: 'Music', icon: Music, path: '/', filter: 'music' },
-    { id: 'other', name: 'Other', icon: MoreHorizontal, path: '/', filter: 'other' },
+    { id: 'all', name: t('sidebar.allFiles'), icon: Files, isDefault: true, path: '/', filter: 'all' },
+    { id: 'pictures', name: t('sidebar.pictures'), icon: Image, path: '/', filter: 'pictures' },
+    { id: 'documents', name: t('sidebar.documents'), icon: FileText, path: '/', filter: 'documents' },
+    { id: 'videos', name: t('sidebar.videos'), icon: Video, path: '/', filter: 'videos' },
+    { id: 'music', name: t('sidebar.music'), icon: Music, path: '/', filter: 'music' },
+    { id: 'other', name: t('sidebar.other'), icon: MoreHorizontal, path: '/', filter: 'other' },
   ];
 
   const actionItems = [
-    { id: 'dashboard', name: 'Dashboard', icon: BarChart, path: '/dashboard' },
-    { id: 'share', name: 'Share', icon: Share, path: '/', filter: 'share' },
-    { id: 'starred', name: 'Starred', icon: Star, path: '/', filter: 'starred' },
-    { id: 'recycle', name: 'Recycle Bin', icon: Trash2, path: '/', filter: 'recycle' },
+    { id: 'dashboard', name: t('sidebar.dashboard'), icon: BarChart, path: '/dashboard' },
+    { id: 'share', name: t('sidebar.share'), icon: Share, path: '/', filter: 'share' },
+    { id: 'starred', name: t('sidebar.starred'), icon: Star, path: '/', filter: 'starred' },
+    { id: 'recycle', name: t('sidebar.recycleBin'), icon: Trash2, path: '/', filter: 'recycle' },
   ];
 
   const handleCategoryClick = (categoryId: string, filter?: string, path?: string) => {
@@ -124,8 +126,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
           <div className={`border-b border-sidebar-border/50 ${collapsed ? 'p-3' : 'p-4'}`}>
             {!collapsed ? (
               <>
-                <h2 className="text-lg font-bold text-sidebar-foreground tracking-tight">File Manager</h2>
-                <p className="text-xs text-muted-foreground mt-1">Organize your files</p>
+                <h2 className="text-lg font-bold text-sidebar-foreground tracking-tight">{t('sidebar.title')}</h2>
+                <p className="text-xs text-muted-foreground mt-1">{t('sidebar.subtitle')}</p>
               </>
             ) : (
               <div className="flex justify-center">
@@ -161,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
               <div className={collapsed ? 'space-y-1' : ''}>
                 {!collapsed && (
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-3">
-                    Categories
+                    {t('sidebar.categories')}
                   </h3>
                 )}
                 <div className={collapsed ? 'space-y-1' : 'space-y-1'}>
@@ -186,7 +188,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, collapsed, onCollap
               <div className={collapsed ? 'space-y-1' : ''}>
                 {!collapsed && (
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-3">
-                    Actions
+                    {t('sidebar.actions')}
                   </h3>
                 )}
                 <div className={collapsed ? 'space-y-1' : 'space-y-1'}>

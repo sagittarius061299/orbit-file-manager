@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFileManager } from '../contexts/FileManagerContext';
 import FileGrid from './FileGrid';
 import FileList from './FileList';
@@ -21,6 +22,7 @@ const MainContent: React.FC<MainContentProps> = ({ sidebarOpen }) => {
     loadMoreFiles, 
     searchQuery 
   } = useFileManager();
+  const { t } = useTranslation();
 
   const { loadMoreRef } = useInfiniteScroll({
     hasMore,
@@ -46,12 +48,12 @@ const MainContent: React.FC<MainContentProps> = ({ sidebarOpen }) => {
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent rounded-full blur-2xl group-hover:from-primary/20 transition-all duration-300"></div>
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-foreground">
-                  {searchQuery ? 'No files match your search' : 'This folder is empty'}
+                  {searchQuery ? t('fileManager.noSearchResults') : t('fileManager.emptyFolder')}
                 </h3>
                 <p className="text-sm text-center max-w-md leading-relaxed">
                   {searchQuery 
-                    ? 'Try adjusting your search terms or browse other folders.'
-                    : 'Drop files here or use the upload button to add your first files.'
+                    ? t('fileManager.noSearchResultsDescription')
+                    : t('fileManager.emptyFolderDescription')
                   }
                 </p>
               </div>
@@ -79,7 +81,7 @@ const MainContent: React.FC<MainContentProps> = ({ sidebarOpen }) => {
                     {isLoading ? (
                       <div className="flex items-center justify-center gap-3 text-muted-foreground">
                         <Loader className="w-5 h-5 animate-spin" />
-                        <span className="text-sm font-medium">Loading more files...</span>
+                        <span className="text-sm font-medium">{t('fileManager.loadingMore')}</span>
                       </div>
                     ) : (
                       <div className="h-8" />
@@ -90,7 +92,7 @@ const MainContent: React.FC<MainContentProps> = ({ sidebarOpen }) => {
                 {/* End of Results */}
                 {!hasMore && !isLoading && displayedFiles.length > 0 && (
                   <div className="flex items-center justify-center py-8 text-muted-foreground">
-                    <span className="text-sm">You've reached the end of the list</span>
+                    <span className="text-sm">{t('fileManager.endOfList')}</span>
                   </div>
                 )}
               </div>
