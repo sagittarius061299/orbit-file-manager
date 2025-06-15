@@ -12,6 +12,9 @@ export interface FileItem {
   parent?: string;
   path: string; // Full path like "documents/projects/2024"
   thumbnail?: string; // Optional thumbnail URL for images
+  videoUrl?: string; // Optional video URL for videos
+  description?: string; // Optional description for videos
+  subtitle?: string; // Optional subtitle for videos
 }
 
 export interface Folder {
@@ -642,37 +645,91 @@ const generateNestedFiles = (): FileItem[] => {
     }
   );
 
-  // Add more videos in videos folder
+  // Video gallery with full metadata
   files.push(
     {
-      id: 'file-vid-3',
-      name: 'Conference Recording.mp4',
+      id: 'video-1',
+      name: 'Big Buck Bunny.mp4',
       type: 'file',
-      size: '234 MB',
-      lastModified: '1 week ago',
+      size: '158 MB',
+      lastModified: '2023-03-15',
       icon: '🎥',
       parent: 'videos',
-      path: 'videos'
+      path: 'videos',
+      thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&h=200&fit=crop',
+      videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      description: 'Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself. When one sunny day three rodents rudely harass Bunny\'s two favorite butterflies, Bunny sets aside his peaceful nature and orchestrates a complex plan for revenge.',
+      subtitle: 'By Blender Foundation'
     },
     {
-      id: 'file-vid-4',
-      name: 'Screen Recording.avi',
+      id: 'video-2',
+      name: 'Elephant Dream.mp4',
       type: 'file',
-      size: '156 MB',
-      lastModified: '3 days ago',
+      size: '79 MB',
+      lastModified: '2023-01-10',
       icon: '🎥',
       parent: 'videos',
-      path: 'videos'
+      path: 'videos',
+      thumbnail: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=300&h=200&fit=crop',
+      videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      description: 'The first Blender Open Movie from 2006. Elephant\'s Dream is a story about a young man and an older man. The relationships between the two protagonists are unclear, and their destinies are on a collision course.',
+      subtitle: 'By Blender Foundation'
     },
     {
-      id: 'file-vid-5',
-      name: 'Training Material.mkv',
+      id: 'video-3',
+      name: 'For Bigger Blazes.mp4',
       type: 'file',
-      size: '567 MB',
-      lastModified: '2 weeks ago',
+      size: '15 MB',
+      lastModified: '2023-05-22',
       icon: '🎥',
       parent: 'videos',
-      path: 'videos'
+      path: 'videos',
+      thumbnail: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=200&fit=crop',
+      videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      description: 'HBO GO now works with Chromecast. Introducing HBO GO on Chromecast: the easiest way to enjoy HBO\'s award-winning series, documentaries, movies, and more on your TV.',
+      subtitle: 'By Google'
+    },
+    {
+      id: 'video-4',
+      name: 'Sintel.mp4',
+      type: 'file',
+      size: '74 MB',
+      lastModified: '2023-02-18',
+      icon: '🎥',
+      parent: 'videos',
+      path: 'videos',
+      thumbnail: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=300&h=200&fit=crop',
+      videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+      description: 'Sintel is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender.',
+      subtitle: 'By Blender Foundation'
+    },
+    {
+      id: 'video-5',
+      name: 'Tears of Steel.mp4',
+      type: 'file',
+      size: '46 MB',
+      lastModified: '2023-04-05',
+      icon: '🎥',
+      parent: 'videos',
+      path: 'videos',
+      thumbnail: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=300&h=200&fit=crop',
+      videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+      description: 'Tears of Steel was realized with crowd-funding by users of the open source 3D creation tool Blender. Target was to improve and test a complete open and free pipeline for visual effects in film.',
+      subtitle: 'By Blender Foundation'
+    },
+    {
+      id: 'video-6',
+      name: 'Subaru Outback On Street And Dirt.mp4',
+      type: 'file',
+      size: '124 MB',
+      lastModified: '2023-06-12',
+      icon: '🎥',
+      parent: 'videos',
+      path: 'videos',
+      thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&h=200&fit=crop',
+      videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
+      description: 'Smoking Tire takes the all-new Subaru Outback to the highest point we can find in hopes our customer-developed commercial plays something other than elevator music.',
+      subtitle: 'By Subaru'
     }
   );
 

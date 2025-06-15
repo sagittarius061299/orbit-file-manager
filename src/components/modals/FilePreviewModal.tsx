@@ -5,6 +5,7 @@ import { useFileManager } from '../../contexts/FileManagerContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Download, Edit, Trash2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import VideoPlayerModal from './VideoPlayerModal';
 
 const FilePreviewModal: React.FC = () => {
   const { modals, closeModal, previewFile, setRenameItem, setDeleteItems, openModal, displayedFiles, setPreviewFile } = useFileManager();
@@ -114,18 +115,30 @@ const FilePreviewModal: React.FC = () => {
 
   if (!previewFile) return null;
 
-  const isImage = previewFile.type === 'file' && (previewFile.icon === '🖼️' || previewFile.name.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i));
-  const currentImageUrl = preloadedImages[previewFile.id] || `https://picsum.photos/800/600?random=${previewFile.id}`;
+  const isImageFile = previewFile.type === 'file' && (previewFile.icon === '🖼️' || !!previewFile.name.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i));
+  const isVideoFile = previewFile?.type === 'file' && 
+    (previewFile.icon === '🎥' || !!previewFile.name.match(/\.(mp4|mov|avi|mkv|webm|m4v|3gp)$/i));
+
+  // Show VideoPlayerModal for videos
+  if (modals.preview && isVideoFile) {
+    return <VideoPlayerModal />;
+  }
+
+  if (!modals.preview || !previewFile || !isImageFile) {
+    return null;
+  }
+
+  const currentImageUrl = preloadedImages[previewFile.id] || previewFile.thumbnail || `https://picsum.photos/800/600?random=${previewFile.id}`;
 
   return (
-    <Dialog open={modals.preview} onOpenChange={handleClose}>
+    <Dialog open={modals.preview && isImageFile} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <span className="text-2xl">{previewFile.icon}</span>
               {previewFile.name}
-              {isImage && totalImages > 1 && (
+              {isImageFile && totalImages > 1 && (
                 <span className="text-sm text-muted-foreground ml-2">
                   {currentImageIndex + 1} {t('common.of')} {totalImages}
                 </span>
@@ -145,7 +158,7 @@ const FilePreviewModal: React.FC = () => {
         <div className="space-y-6">
           {/* File Preview Area */}
           <div className="relative aspect-video bg-gradient-to-br from-muted/20 to-muted/10 rounded-xl flex items-center justify-center border border-border/40 overflow-hidden">
-            {isImage ? (
+            {isImageFile ? (
               <>
                 <img 
                   src={currentImageUrl}
@@ -198,7 +211,7 @@ const FilePreviewModal: React.FC = () => {
           </div>
 
           {/* Navigation Hint */}
-          {isImage && totalImages > 1 && (
+          {isImageFile && totalImages > 1 && (
             <div className="text-center text-xs text-muted-foreground">
               {t('fileManager.navigationHint')}
             </div>

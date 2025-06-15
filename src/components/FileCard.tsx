@@ -51,7 +51,7 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
 
   const isVideoFile = () => {
     const extension = file.name.split('.').pop()?.toLowerCase();
-    return ['mp4', 'avi', 'mov', 'wmv', 'mkv'].includes(extension || '');
+    return ['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'm4v', '3gp'].includes(extension || '');
   };
 
   return (
@@ -125,19 +125,33 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
         {/* File preview/thumbnail */}
         <div className="aspect-square bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5 rounded-xl flex items-center justify-center mb-3 group-hover:scale-[1.02] transition-all duration-300 shadow-inner border border-border/20 relative overflow-hidden">
           {file.thumbnail ? (
-            <img 
-              src={file.thumbnail} 
-              alt={file.name}
-              className="absolute inset-0 w-full h-full object-cover rounded-xl"
-              loading="lazy"
-              onError={(e) => {
-                // Fallback to icon if image fails to load
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const fallback = target.nextElementSibling as HTMLElement;
-                if (fallback) fallback.style.display = 'flex';
-              }}
-            />
+            <div className="relative w-full h-full">
+              <img 
+                src={file.thumbnail} 
+                alt={file.name}
+                className="absolute inset-0 w-full h-full object-cover rounded-xl"
+                loading="lazy"
+                onError={(e) => {
+                  // Fallback to icon if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+              {/* Video play overlay */}
+              {isVideoFile() && (
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+                  <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-0 h-0 border-l-[8px] border-l-black border-y-[6px] border-y-transparent ml-1"></div>
+                  </div>
+                </div>
+              )}
+              {/* Fallback icon for failed thumbnail loads */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center" style={{ display: 'none' }}>
+                <div className="text-4xl opacity-80">{file.icon}</div>
+              </div>
+            </div>
           ) : isImageFile() || isVideoFile() ? (
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
               <div className="text-4xl opacity-80">{file.icon}</div>
@@ -148,12 +162,6 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
               {file.icon}
             </div>
           )}
-          {/* Fallback icon for failed thumbnail loads */}
-          {file.thumbnail && (
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center" style={{ display: 'none' }}>
-              <div className="text-4xl opacity-80">{file.icon}</div>
-            </div>
-          )}
         </div>
         
         {/* File info */}
@@ -161,6 +169,18 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
           <h3 className="font-semibold text-sm text-foreground truncate leading-tight font-display">
             {file.name}
           </h3>
+          {/* Video subtitle */}
+          {isVideoFile() && file.subtitle && (
+            <p className="text-xs text-muted-foreground truncate opacity-75">
+              {file.subtitle}
+            </p>
+          )}
+          {/* Video description */}
+          {isVideoFile() && file.description && (
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed opacity-90">
+              {file.description}
+            </p>
+          )}
           <div className="space-y-1 text-xs text-muted-foreground">
             <div className="truncate font-medium">{file.size || 'Folder'}</div>
             <div className="truncate opacity-80">{file.lastModified}</div>
